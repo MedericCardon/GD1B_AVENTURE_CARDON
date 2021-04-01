@@ -1,0 +1,90 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8" />
+    <title>Making your first Phaser 3 Game - Part 10</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+var config = {
+    type: Phaser.AUTO,
+    width: 1280,
+    height: 720,
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 0
+             },
+            debug: false
+        },
+    input:{ 
+        gamepad:true
+    },
+    },
+    scene: {
+        preload: preload,
+        create: create,
+        update: update
+    }
+};
+
+var monstre_cerveau;
+var cursors;
+
+
+var game = new Phaser.Game(config);
+
+function preload ()
+{
+    
+    this.load.spritesheet('monstre_cerveau', 'premier-test_assets/spriteSheet_monstre_cerveau-assets/spriteSheet_monstre_cerveau.png', { frameWidth: 155.75, frameHeight: 121 });
+}
+
+function create ()
+{
+    
+    cursors = this.input.keyboard.createCursorKeys();
+
+    monstre_cerveau = this.physics.add.sprite(100, 450, 'monstre_cerveau');
+
+    
+    //player.setBounce(0.2);
+    monstre_cerveau.setCollideWorldBounds(true);
+
+    
+    this.anims.create({
+        key: 'tentacules',
+        frames: this.anims.generateFrameNumbers('monstre_cerveau', { start: 0, end: 3 }),
+        frameRate: 7,
+        repeat: -1
+    });
+
+    
+   
+}
+
+function update ()
+{
+    if (cursors.left.isDown)
+        {
+            monstre_cerveau.anims.play('tentacules');
+
+             
+        }
+    
+}
+
+
+
+</script>
+
+</body>
+</html>
