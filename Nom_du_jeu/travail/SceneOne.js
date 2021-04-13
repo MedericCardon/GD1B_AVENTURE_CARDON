@@ -7,21 +7,29 @@ class SceneOne extends Phaser.Scene{
     }
     init(data){
     }
-    preload(){   
-        this.load.image('assets/02_spriteSheet_personnage/scene_01.png');
-        this.load.image('assets/02_spriteSheet_personnage/player.png')
+    preload(){
+        this.load.image('tiles', 'assets/00_tiled/Scene_01.png');
+        this.load.tilemapTiledJSON('map_1', 'assets/00_tiled/Scene_01.json');
+        this.load.image('assets/02_spriteSheet_personnage/player.png');
         
     }
     create(){
         
-
+        const map = this.make.tilemap({key: 'map_1'});
+        const tileset = map.addTilesetImage('tileset_placeholder', 'tiles');
+        const passage = map.createStaticLayer('passage', tileset, 0, 0);
+        
+        const bloque = map.createStaticLayer('bloque', tileset, 0, 0);
         player = this.physics.add.sprite(300, 300, 'player');
 
+        passage.setCollisionByExclusion(-1, true);
+        bloque.setCollisionByExclusion(-1, true);
         this.physics.add.overlap(player, zone, changementZone, null, this);
 
         cursors = this.input.keyboard.createCursorKeys();
+        this.physics.add.collider(player, bloque);
         
-        function changementZone(player, zone){
+        function changementZone(player, passage){
             if (player.y >= 730 && player.x >= 400 && player.x <= 560){
                 this.scene.start("sceneTwo");
                 console.log("changement");
