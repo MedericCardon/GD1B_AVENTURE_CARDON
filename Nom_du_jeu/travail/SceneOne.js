@@ -6,7 +6,7 @@ var blockCentral_2;
 var arbre;
 class SceneOne extends Phaser.Scene{
     constructor(){
-        super("sceneOne");
+        super("SceneOne");
     }
     init(data){
     }
@@ -22,7 +22,7 @@ class SceneOne extends Phaser.Scene{
     create(){
         
         this.add.image(0,0,'scene_01').setOrigin(0).setScrollFactor(0);
-        passage_bas = this.physics.add.sprite(580, 700, 'passage_bas');
+        passage_bas = this.physics.add.sprite(580, 700,'passage_bas');
         
 
         blockCentral = this.physics.add.staticGroup(); // Le personnage passe derrière //
@@ -31,10 +31,11 @@ class SceneOne extends Phaser.Scene{
         
 
        blockCentral.create(410,250,'blockCentral').setOrigin(0).setSize(250,20).setOffset(150,150);
+
         // ----- Player ----- //
+
         player = this.physics.add.sprite(300, 300, 'player');
         player.setCollideWorldBounds(true);
-
         
        // ----- Arbres ----- //
 
@@ -50,9 +51,8 @@ class SceneOne extends Phaser.Scene{
         cursors = this.input.keyboard.createCursorKeys();
         
         function changementZone(){
-                this.scene.start("SceneTwo");
-                console.log("changement");
-            
+            this.scene.start("SceneTwo");
+            console.log("changement");
         }
     }
     
@@ -63,14 +63,17 @@ class SceneOne extends Phaser.Scene{
         else if (cursors.left.isDown){
             player.setVelocityX(-200);
         }
-        else if (cursors.up.isDown){
+        else if (cursors.right.isUp && cursors.left.isUp){
+            player.setVelocityX(0);
+        }
+        if (cursors.up.isDown){
             player.setVelocityY(-200);
         }
         else if (cursors.down.isDown){
             player.setVelocityY(200);
         }
-        else{
-            player.setVelocity(0);
+        else if (cursors.up.isUp && cursors.down.isUp){
+            player.setVelocityY(0);
         }
     }
 }
