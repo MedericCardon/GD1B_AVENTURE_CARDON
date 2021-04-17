@@ -4,6 +4,24 @@ var passage_bas;
 var blockCentral;
 var blockCentral_2;
 var arbre;
+
+var compteur = 150; // par défaut: 150 //
+var invincible = false;
+var playerPdv = 5;
+var cle;
+var scoreCle = 0;
+var scoreGateau = 0;
+var scoreBonbon = 0;
+var texte_cle;
+var texte_bonbon;
+var texte_gateau;
+var gateau;
+var bonbon;
+
+var visibleGateau = false;
+var visibleBonbon = false;
+
+
 class SceneOne extends Phaser.Scene{
     constructor(){
         super("SceneOne");
@@ -18,6 +36,11 @@ class SceneOne extends Phaser.Scene{
         this.load.image('arbre', 'assets/01_decors/block_decors-assets/arbre.png')
         this.load.image('blockCentral', 'assets/01_decors/block_decors-assets/block_central.png')
         this.load.image('blockCentral_2', 'assets/01_decors/block_decors-assets/block_central_2.png')
+
+        this.load.image('cle','assets/04_items/Item_collectibles-assets/cle.png')
+        this.load.image('gateau','assets/04_items/Item_collectibles-assets/gateau.png')
+        this.load.image('bonbon','assets/04_items/Item_collectibles-assets/bonbon.png')
+        this.load.image('HUD','assets/04_items/Item_collectibles-assets/HUD.png')
     }
     create(){
         
@@ -36,6 +59,8 @@ class SceneOne extends Phaser.Scene{
 
         player = this.physics.add.sprite(300, 300, 'player');
         player.setCollideWorldBounds(true);
+
+        this.add.image(0,0,'HUD').setOrigin(0);
         
        // ----- Arbres ----- //
 
@@ -49,6 +74,10 @@ class SceneOne extends Phaser.Scene{
         this.physics.add.collider(player,blockCentral);
 
         cursors = this.input.keyboard.createCursorKeys();
+
+        texte_cle = this.add.text(80, 20, '0', { font: '20px Georgia', fill: '#f0acdc' });
+        texte_gateau = this.add.text(160,20, '0',{font: '20px Georgia', fill: '#f0acdc' });
+        texte_bonbon = this.add.text(230,19, '0',{font: '20px Georgia', fill: '#f0acdc' });
         
         function changementZone(){
             this.scene.start("SceneTwo");
@@ -59,9 +88,11 @@ class SceneOne extends Phaser.Scene{
     update(){
         if (cursors.right.isDown){
             player.setVelocityX(200);
+            player.setFlipX(false);
         }
         else if (cursors.left.isDown){
             player.setVelocityX(-200);
+            player.setFlipX(true);
         }
         else if (cursors.right.isUp && cursors.left.isUp){
             player.setVelocityX(0);
