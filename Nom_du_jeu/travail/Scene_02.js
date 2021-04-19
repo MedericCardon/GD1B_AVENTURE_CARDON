@@ -6,6 +6,7 @@ var blockHaut;
 var blockBas;
 var blockDroit;
 var passageHaut;
+var passageGauche;
 var ennemi_cerveau;
 var compteur = 150; // par défaut: 150 //
 var invincible = false;
@@ -20,6 +21,8 @@ var texte_bonbon;
 var texte_gateau;
 var gateau;
 var bonbon;
+
+var maison1;
 
 var changeZone = false;
 
@@ -64,6 +67,8 @@ class Scene_02 extends Phaser.Scene{
         this.load.image('gateau','assets/04_items/Item_collectibles-assets/gateau.png')
         this.load.image('bonbon','assets/04_items/Item_collectibles-assets/bonbon.png')
         this.load.image('HUD','assets/04_items/Item_collectibles-assets/HUD.png')
+        this.load.image('passageGauche_s2', 'assets/01_decors/block_decors-assets/passage_zone_02.png');
+        this.load.image('maison1', 'assets/01_decors/batiments-assets/maison_01.png');
 
         this.load.spritesheet('ennemi_cerveau', 'assets/03_spriteSheet_monstre_cerveau/spriteSheet_monstre_cerveau-assets/spriteSheet_monstre_cerveau.png', { frameWidth: 155.75, frameHeight: 121 });
         
@@ -80,6 +85,9 @@ class Scene_02 extends Phaser.Scene{
         blockBas = this.physics.add.staticGroup();
         blockDroit = this.physics.add.staticGroup();
         passageHaut = this.physics.add.staticGroup();
+        passageGauche = this.physics.add.staticGroup();
+        maison1 = this.physics.add.staticGroup();
+
 
         
 
@@ -87,19 +95,22 @@ class Scene_02 extends Phaser.Scene{
         ennemi_cerveau.body.setAllowGravity(false); // pas de gravité pour les ennemis //
         ennemi_cerveau.setCollideWorldBounds(true);
         
-        passageHaut.create(100,20,'passageHaut_s2').setOrigin(0);
+        passageHaut.create(500,0,'passageHaut_s2');
+        passageGauche.create(0,350,'passageGauche_s2');
         blockHaut.create(0,0,'blockHaut').setOrigin(0);
         blockDroit.create(675,310,'blockDroit').setOrigin(0);
         blockCentral_s2_2.create(20,150,'blockCentral2_scene2').setOrigin(0);
-       
+        maison1.create(800,505,'maison1').setFlipX(true).setSize(200,150).setOffset(20,-5);
         // ----- Player ----- //
         player = this.physics.add.sprite(200, 200, 'player');
         player.setCollideWorldBounds(true);
         player.setVelocity(0);
         
         this.add.image(0,0,'HUD').setOrigin(0);
+        
 
         blockCentral_s2.create(20,150,'blockCentral_scene2').setOrigin(0).setSize(300,50).setOffset(590,230);
+        
         blockBas.create(0,100,'blockBas').setOrigin(0);
         
         cle = this.physics.add.sprite(1200,400,'cle');
@@ -108,14 +119,18 @@ class Scene_02 extends Phaser.Scene{
 
         gateau = this.physics.add.sprite(ennemi_cerveau.x,ennemi_cerveau.y,'gateau').setAlpha(0);
         bonbon = this.physics.add.sprite(ennemi_cerveau.x,ennemi_cerveau.y,'bonbon').setAlpha(0);
+
+        
         
 
         this.physics.add.overlap(player,passageHaut,changementZone2, null, this);
+        this.physics.add.overlap(player,passageGauche,changementZone1, null, this);
         this.physics.add.collider(player,blockCentral_s2);
         this.physics.add.overlap(player,ennemi_cerveau,killEnnemi,null,this);
         this.physics.add.overlap(player,cle,dropCleS2,null,this);
         this.physics.add.overlap(player,bonbon,dropBonbonS2,null,this);
         this.physics.add.overlap(player,gateau,dropGateauS2,null,this);
+        this.physics.add.collider(player,maison1);
 
         // ----- Pad + touches clavier ----- //
 
@@ -146,7 +161,11 @@ class Scene_02 extends Phaser.Scene{
         function changementZone2(){
             this.scene.start("Scene_01");
             console.log("changement");
+        }
 
+        function changementZone1(){
+            this.scene.start("Scene_03");
+            console.log("changement");
         }
 
 

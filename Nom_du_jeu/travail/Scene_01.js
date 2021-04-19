@@ -18,6 +18,8 @@ var texte_gateau;
 var gateau;
 var bonbon;
 
+var changeZone = false;
+
 var visibleGateau = false;
 var visibleBonbon = false;
 
@@ -124,13 +126,18 @@ class Scene_01 extends Phaser.Scene{
             player.setX(100);
             player.setY(100);
             console.log("changement");
+            changeZone = true;
+        }
+        if (changeZone == true){
+            player.setX(700);
+            player.setY(600);
         }
 
     
     }
     
     update(){
-
+        
         // ----- controles clavier ----- //
         if (keyD.isDown){
             player.setVelocityX(200);
