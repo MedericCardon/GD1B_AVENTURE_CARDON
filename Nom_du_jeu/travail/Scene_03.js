@@ -20,6 +20,10 @@ var gateau1;
 var bonbon1;
 var gateau2;
 var bonbon2;
+
+var dropBonbon1 = true;
+var dropBonbon2 = true;
+
 var visibleGateau1 = false;
 var visibleBonbon1 = false;
 
@@ -129,7 +133,6 @@ class Scene_03 extends Phaser.Scene{
         gateau1 = this.physics.add.sprite(ennemi_cerveau1.x,ennemi_cerveau1.y,'gateau').setAlpha(0);
         bonbon1 = this.physics.add.sprite(ennemi_cerveau1.x,ennemi_cerveau1.y,'bonbon').setAlpha(0);
 
-        gateau2 = this.physics.add.sprite(ennemi_cerveau2.x,ennemi_cerveau2.y,'gateau').setAlpha(0);
         bonbon2 = this.physics.add.sprite(ennemi_cerveau2.x,ennemi_cerveau2.y,'bonbon').setAlpha(0);
 
         // ----- Pad + touches clavier ----- //
@@ -160,9 +163,9 @@ class Scene_03 extends Phaser.Scene{
         this.physics.add.overlap(player,ennemi_cerveau1,killEnnemi1,null,this);
         this.physics.add.overlap(player,ennemi_cerveau2,killEnnemi2,null,this);
         this.physics.add.overlap(player,cle,dropCle,null,this);
-        this.physics.add.overlap(player,bonbon1,dropBonbonS3,null,this);
+        this.physics.add.overlap(player,bonbon1,dropBonbonS3_1,null,this);
         this.physics.add.overlap(player,gateau1,dropGateauS3,null,this);
-        this.physics.add.overlap(player,bonbon2,dropBonbonS3,null,this);
+        this.physics.add.overlap(player,bonbon2,dropBonbonS3_2,null,this);
         this.physics.add.overlap(player,gateau2,dropGateauS3,null,this);
     }
 
@@ -232,8 +235,8 @@ function killEnnemi1(){
     ennemi_cerveau1.destroy();
     gateau1.setAlpha(1);
     bonbon1.setAlpha(1);
-    gateau1.setX(ennemi_cerveau.x);
-    gateau1.setY(ennemi_cerveau.y);
+    gateau1.setX(ennemi_cerveau1.x);
+    gateau1.setY(ennemi_cerveau1.y);
     visibleGateau1 = true;
     bonbon1.setX(ennemi_cerveau1.x + 30);
     bonbon1.setY(ennemi_cerveau1.y + 20);
@@ -242,11 +245,7 @@ function killEnnemi1(){
 
 function killEnnemi2(){
     ennemi_cerveau2.destroy();
-    gateau2.setAlpha(1);
     bonbon2.setAlpha(1);
-    gateau2.setX(ennemi_cerveau2.x);
-    gateau2.setY(ennemi_cerveau2.y);
-    visibleGateau2 = true;
     bonbon2.setX(ennemi_cerveau2.x + 30);
     bonbon2.setY(ennemi_cerveau2.y + 20);
     visibleBonbon2 = true;
@@ -259,27 +258,30 @@ function dropCleS3(){
     texte_cle.setText(scoreCle);
 }
 
-function dropBonbonS3(){
-    scoreBonbon +=7;
-    if(visibleBonbon1 == true){
+function dropBonbonS3_1(){
+    
+    if(visibleBonbon1 == true && dropBonbon1 == true){
+        scoreBonbon +=7;
         bonbon1.destroy(true,true);
         texte_bonbon.setText(scoreBonbon);
+        dropBonbon1 = false;
     }
-    if(visibleBonbon2 == true){
+}
+function dropBonbonS3_2(){
+
+    if(visibleBonbon2 == true && dropBonbon2 == true){
+        scoreBonbon +=7;
         bonbon2.destroy(true,true);
         texte_bonbon.setText(scoreBonbon);
+        dropBonbon2 = false;
     }
 }
 
 function dropGateauS3(){
-    scoreGateau +=1;
-    if(visibleGateau == true){
-        gateau.destroy(true,true);
-        texte_gateau.setText(scoreGateau);
-    }
-    if(visibleGateau2 == true){
-
-        gateau2.destroy(true,true);
+    
+    if(visibleGateau1 == true){
+        scoreGateau +=1;
+        gateau1.destroy(true,true);
         texte_gateau.setText(scoreGateau);
     }
 }

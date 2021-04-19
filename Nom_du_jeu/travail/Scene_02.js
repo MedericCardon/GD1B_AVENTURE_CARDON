@@ -9,6 +9,8 @@ var passageHaut;
 var passageGauche;
 var ennemi_cerveau;
 var compteur = 150; // par défaut: 150 //
+var compteurBullet = 50;
+var bulletOn = true;
 var invincible = false;
 var playerPdv = 5;
 var cle;
@@ -38,12 +40,18 @@ var keyQ;
 var keyS;
 var keyD;
 var keyE;
-var spaceBar;
+var boutonTire;
 
 var gamepad;
 var paddle;
 var padConnected;
 var pad;
+
+
+
+var groupeBullets;
+var bullet;
+
 
 
 
@@ -74,6 +82,10 @@ class Scene_02 extends Phaser.Scene{
         
     }
     create(){
+
+        
+
+
         console.log(etat_ennemi);
         this.add.image(0,0,'background').setOrigin(0).setScrollFactor(0);
         
@@ -87,6 +99,8 @@ class Scene_02 extends Phaser.Scene{
         passageHaut = this.physics.add.staticGroup();
         passageGauche = this.physics.add.staticGroup();
         maison1 = this.physics.add.staticGroup();
+        groupeBullets = this.physics.add.group();
+
 
 
         
@@ -126,11 +140,16 @@ class Scene_02 extends Phaser.Scene{
         this.physics.add.overlap(player,passageHaut,changementZone2, null, this);
         this.physics.add.overlap(player,passageGauche,changementZone1, null, this);
         this.physics.add.collider(player,blockCentral_s2);
-        this.physics.add.overlap(player,ennemi_cerveau,killEnnemi,null,this);
+        this.physics.add.overlap(groupeBullets,ennemi_cerveau,killEnnemi,null,this);
+        this.physics.add.overlap(groupeBullets, ennemi_cerveau, hit, null,this);
+        this.physics.add.overlap(groupeBullets, blockCentral_s2, hit, null,this);
+        this.physics.add.overlap(groupeBullets, maison1, hit, null,this);
         this.physics.add.overlap(player,cle,dropCleS2,null,this);
         this.physics.add.overlap(player,bonbon,dropBonbonS2,null,this);
         this.physics.add.overlap(player,gateau,dropGateauS2,null,this);
         this.physics.add.collider(player,maison1);
+
+        
 
         // ----- Pad + touches clavier ----- //
 
@@ -140,7 +159,9 @@ class Scene_02 extends Phaser.Scene{
         keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
-        spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        boutonTire = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+
 
         keyZ.reset();
         keyQ.reset();
@@ -194,10 +215,17 @@ class Scene_02 extends Phaser.Scene{
             yoyo: true,
             repeat: -1
         });
+
     }
     
     
     update(){
+        
+
+        
+    if ( Phaser.Input.Keyboard.JustDown(boutonTire)) {
+        tirer(player);
+    }
 
         
         if(etat_ennemi == false && dropBonbon == false && dropGateau == false){
@@ -225,8 +253,17 @@ class Scene_02 extends Phaser.Scene{
             }
         }
 
+        if(bulletOn == false){ // relance du compteur d'invulné player //
+            compteurBullet-- ;
+            if(compteurBullet == 0){
+                compteurBullet = 50;
+                bulletOn = true ;
+            }
+        }
+
 
         if (keyD.isDown){
+            player.direction = 'right';
             player.setVelocityX(200);
             ennemi_cerveau.anims.play('move_ennemi_cerveau');
             player.setFlipX(false);
@@ -234,6 +271,7 @@ class Scene_02 extends Phaser.Scene{
         else if (keyQ.isDown){
             player.setVelocityX(-200);
             player.setFlipX(true);
+            player.direction = 'left';
         }
         else if (keyD.isUp && keyQ.isUp){
             player.setVelocityX(0);
@@ -267,7 +305,22 @@ class Scene_02 extends Phaser.Scene{
     }
 }
 
-
+function tirer(player) {
+    if (bulletOn == true){
+        var coefDir;
+        if (player.direction == 'left') { 
+            coefDir = -1; 
+        } else { 
+            coefDir = 1 }
+        // on crée la balle a coté du joueur
+        bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, 'gateau');
+        // parametres physiques de la balle.
+        bullet.setCollideWorldBounds(false);
+        bullet.body.allowGravity =false;
+        bullet.setVelocity(500 * coefDir, 0); // vitesse en x et en y
+        bulletOn = false;
+        }
+}
 function hitEnnemi(){
     if(invincible == false){
         invincible = true ;
@@ -287,6 +340,7 @@ function killEnnemi(){
         bonbon.setX(ennemi_cerveau.x + 30);
         bonbon.setY(ennemi_cerveau.y + 20);
         visibleBonbon = true;
+        
     }
 }
 
@@ -318,3 +372,10 @@ function dropGateauS2(){
         dropGateau = false;
     }
 }
+function hit (bullet) {
+     bullet.destroy();
+}
+
+
+
+
