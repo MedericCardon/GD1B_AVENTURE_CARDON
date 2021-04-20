@@ -12,15 +12,20 @@ var compteur = 150; // par défaut: 150 //
 var compteurBullet = 50;
 var bulletOn = true;
 var invincible = false;
-var playerPdv = 5;
+//var playerPdv;
 var cle;
-var scoreCle = 0;
+var pdv5;
+var pdv4;
+var pdv3;
+var pdv2;
+var pdv1;
+/*var scoreCle = 0;
 var etat_ennemi = true;
 var scoreGateau = 0;
 var scoreBonbon = 0;
 var texte_cle;
 var texte_bonbon;
-var texte_gateau;
+var texte_gateau;*/
 var gateau;
 var bonbon;
 
@@ -77,6 +82,11 @@ class Scene_02 extends Phaser.Scene{
         this.load.image('HUD','assets/04_items/Item_collectibles-assets/HUD.png')
         this.load.image('passageGauche_s2', 'assets/01_decors/block_decors-assets/passage_zone_02.png');
         this.load.image('maison1', 'assets/01_decors/batiments-assets/maison_01.png');
+        this.load.image('pdv5', 'assets/04_items/Item_collectibles-assets/pdv_5.png')
+        this.load.image('pdv4', 'assets/04_items/Item_collectibles-assets/pdv_4.png')
+        this.load.image('pdv3', 'assets/04_items/Item_collectibles-assets/pdv_3.png')
+        this.load.image('pdv2', 'assets/04_items/Item_collectibles-assets/pdv_2.png')
+        this.load.image('pdv1', 'assets/04_items/Item_collectibles-assets/pdv_1.png')
 
         this.load.spritesheet('ennemi_cerveau', 'assets/03_spriteSheet_monstre_cerveau/spriteSheet_monstre_cerveau-assets/spriteSheet_monstre_cerveau.png', { frameWidth: 155.75, frameHeight: 121 });
         
@@ -119,6 +129,50 @@ class Scene_02 extends Phaser.Scene{
         player = this.physics.add.sprite(200, 200, 'player');
         player.setCollideWorldBounds(true);
         player.setVelocity(0);
+
+        pdv1 = this.physics.add.sprite(320,30,'pdv1').setAlpha(0);
+        pdv2 = this.physics.add.sprite(320,30,'pdv2').setAlpha(0);
+        pdv3 = this.physics.add.sprite(320,30,'pdv3').setAlpha(0);
+        pdv4 = this.physics.add.sprite(320,30,'pdv4').setAlpha(0);
+        pdv5 = this.physics.add.sprite(320,30,'pdv5').setAlpha(1);
+
+        if(playerPdv == 5){
+            pdv5.setAlpha(1);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 4){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(1);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 3){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(1);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 2){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(1);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 1){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(1);
+        }
+
+        console.log(scoreGateau);
         
         this.add.image(0,0,'HUD').setOrigin(0);
         
@@ -140,6 +194,7 @@ class Scene_02 extends Phaser.Scene{
         this.physics.add.overlap(player,passageHaut,changementZone2, null, this);
         this.physics.add.overlap(player,passageGauche,changementZone1, null, this);
         this.physics.add.collider(player,blockCentral_s2);
+        this.physics.add.overlap(player,ennemi_cerveau,perdPdv,null,this);
         this.physics.add.overlap(groupeBullets,ennemi_cerveau,killEnnemi,null,this);
         this.physics.add.overlap(groupeBullets, ennemi_cerveau, hit, null,this);
         this.physics.add.overlap(groupeBullets, blockCentral_s2, hit, null,this);
@@ -177,6 +232,7 @@ class Scene_02 extends Phaser.Scene{
         texte_cle = this.add.text(80, 20, scoreCle, { font: '20px Georgia', fill: '#f0acdc' });
         texte_gateau = this.add.text(160,20, scoreGateau,{font: '20px Georgia', fill: '#f0acdc' });
         texte_bonbon = this.add.text(230,19, scoreBonbon,{font: '20px Georgia', fill: '#f0acdc' });
+
 
         
         function changementZone2(){
@@ -216,12 +272,14 @@ class Scene_02 extends Phaser.Scene{
             repeat: -1
         });
 
+        
+
     }
     
     
     update(){
         
-
+    
         
     if ( Phaser.Input.Keyboard.JustDown(boutonTire)) {
         tirer(player);
@@ -261,6 +319,48 @@ class Scene_02 extends Phaser.Scene{
             }
         }
 
+       if(keyE.isDown && playerPdv < 5 && scoreGateau >= 1){
+            console.log(scoreGateau);
+            playerPdv += 1;
+            scoreGateau -= 1;
+            texte_gateau.setText(scoreGateau);
+
+            if(playerPdv == 5){
+                pdv5.setAlpha(1);
+                pdv4.setAlpha(0);
+                pdv3.setAlpha(0);
+                pdv2.setAlpha(0);
+                pdv1.setAlpha(0);
+            }
+            if(playerPdv == 4){
+                pdv5.setAlpha(0);
+                pdv4.setAlpha(1);
+                pdv3.setAlpha(0);
+                pdv2.setAlpha(0);
+                pdv1.setAlpha(0);
+            }
+            if(playerPdv == 3){
+                pdv5.setAlpha(0);
+                pdv4.setAlpha(0);
+                pdv3.setAlpha(1);
+                pdv2.setAlpha(0);
+                pdv1.setAlpha(0);
+            }
+            if(playerPdv == 2){
+                pdv5.setAlpha(0);
+                pdv4.setAlpha(0);
+                pdv3.setAlpha(0);
+                pdv2.setAlpha(1);
+                pdv1.setAlpha(0);
+            }
+            if(playerPdv == 1){
+                pdv5.setAlpha(0);
+                pdv4.setAlpha(0);
+                pdv3.setAlpha(0);
+                pdv2.setAlpha(0);
+                pdv1.setAlpha(1);
+            }
+       }
 
         if (keyD.isDown){
             player.direction = 'right';
@@ -321,12 +421,7 @@ function tirer(player) {
         bulletOn = false;
         }
 }
-function hitEnnemi(){
-    if(invincible == false){
-        invincible = true ;
-        playerPdv -= 1;
-    }
-}
+
 function killEnnemi(){
     etat_ennemi = false;
     if (etat_ennemi == false){
@@ -375,6 +470,52 @@ function dropGateauS2(){
 function hit (bullet) {
      bullet.destroy();
 }
+function perdPdv(){
+    
+    if(invincible == false){
+        playerPdv -= 1;
+        console.log(playerPdv);
+        if(playerPdv == 5){
+            pdv5.setAlpha(1);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 4){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(1);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 3){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(1);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 2){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(1);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 1){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(1);
+        }
+    }
+    invincible = true;
+}
+
+
+
 
 
 

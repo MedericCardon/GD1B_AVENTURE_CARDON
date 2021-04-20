@@ -7,9 +7,15 @@ var arbre;
 
 var compteur = 150; // par défaut: 150 //
 var invincible = false;
+var pdv5;
+var pdv4;
+var pdv3;
+var pdv2;
+var pdv1;
 var playerPdv = 5;
 var cle;
 var scoreCle = 0;
+var etat_ennemi = true;
 var scoreGateau = 0;
 var scoreBonbon = 0;
 var texte_cle;
@@ -53,6 +59,12 @@ class Scene_01 extends Phaser.Scene{
         this.load.image('arbre', 'assets/01_decors/block_decors-assets/arbre.png')
         this.load.image('blockCentral', 'assets/01_decors/block_decors-assets/block_central.png')
         this.load.image('blockCentral_2', 'assets/01_decors/block_decors-assets/block_central_2.png')
+        this.load.image('pdv5', 'assets/04_items/Item_collectibles-assets/pdv_5.png')
+        this.load.image('pdv4', 'assets/04_items/Item_collectibles-assets/pdv_4.png')
+        this.load.image('pdv3', 'assets/04_items/Item_collectibles-assets/pdv_3.png')
+        this.load.image('pdv2', 'assets/04_items/Item_collectibles-assets/pdv_2.png')
+        this.load.image('pdv1', 'assets/04_items/Item_collectibles-assets/pdv_1.png')
+        
 
         // ----- Items & HUD ----- //
 
@@ -73,6 +85,7 @@ class Scene_01 extends Phaser.Scene{
         blockCentral_2 = this.physics.add.staticGroup(); // Le personnage passe devant //
         arbre = this.physics.add.staticGroup(); // arbre element de décor // 
         
+        
 
        blockCentral.create(410,250,'blockCentral').setOrigin(0).setSize(250,20).setOffset(150,150);
 
@@ -82,6 +95,56 @@ class Scene_01 extends Phaser.Scene{
         player.setCollideWorldBounds(true);
 
         this.add.image(0,0,'HUD').setOrigin(0);
+        
+        
+        
+        
+        pdv1 = this.physics.add.sprite(320,30,'pdv1').setAlpha(0);
+        pdv2 = this.physics.add.sprite(320,30,'pdv2').setAlpha(0);
+        pdv3 = this.physics.add.sprite(320,30,'pdv3').setAlpha(0);
+        pdv4 = this.physics.add.sprite(320,30,'pdv4').setAlpha(0);
+        pdv5 = this.physics.add.sprite(320,30,'pdv5').setAlpha(0);
+
+        if(playerPdv == 5){
+            pdv5.setAlpha(1);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 4){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(1);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 3){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(1);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 2){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(1);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 1){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(1);
+        }
+
+        console.log(scoreGateau);
+        
+        
+        
         
        // ----- Arbres ----- //
 
@@ -93,6 +156,8 @@ class Scene_01 extends Phaser.Scene{
 
         this.physics.add.overlap(player,passage_bas, changementZone, null, this);
         this.physics.add.collider(player,blockCentral);
+
+
 
         // ----- Pad + touches clavier ----- //
 
@@ -109,6 +174,8 @@ class Scene_01 extends Phaser.Scene{
         keyS.reset();
         keyD.reset();
 
+        
+
 
         this.input.gamepad.once('connected', function (pad, button, index) {
             paddle = pad;
@@ -120,6 +187,7 @@ class Scene_01 extends Phaser.Scene{
         texte_cle = this.add.text(80, 20, scoreCle, { font: '20px Georgia', fill: '#f0acdc' });
         texte_gateau = this.add.text(160,20, scoreGateau,{font: '20px Georgia', fill: '#f0acdc' });
         texte_bonbon = this.add.text(230,19, scoreBonbon,{font: '20px Georgia', fill: '#f0acdc' });
+
         
         function changementZone(){
             this.scene.start("Scene_02");
@@ -132,12 +200,61 @@ class Scene_01 extends Phaser.Scene{
             player.setX(700);
             player.setY(600);
         }
-
-    
     }
     
     update(){
+
+        if(invincible == true){ // relance du compteur d'invulné player //
+            compteur-- ;
+            if(compteur == 0){
+                compteur = 150;
+                invincible = false ;
+            }
+        }
         
+        if(keyE.isDown && playerPdv < 5 && scoreGateau >= 1){
+            console.log(scoreGateau);
+            playerPdv += 1;
+            scoreGateau -= 1;
+            texte_gateau.setText(scoreGateau);
+
+            if(playerPdv == 5){
+                pdv5.setAlpha(1);
+                pdv4.setAlpha(0);
+                pdv3.setAlpha(0);
+                pdv2.setAlpha(0);
+                pdv1.setAlpha(0);
+            }
+            if(playerPdv == 4){
+                pdv5.setAlpha(0);
+                pdv4.setAlpha(1);
+                pdv3.setAlpha(0);
+                pdv2.setAlpha(0);
+                pdv1.setAlpha(0);
+            }
+            if(playerPdv == 3){
+                pdv5.setAlpha(0);
+                pdv4.setAlpha(0);
+                pdv3.setAlpha(1);
+                pdv2.setAlpha(0);
+                pdv1.setAlpha(0);
+            }
+            if(playerPdv == 2){
+                pdv5.setAlpha(0);
+                pdv4.setAlpha(0);
+                pdv3.setAlpha(0);
+                pdv2.setAlpha(1);
+                pdv1.setAlpha(0);
+            }
+            if(playerPdv == 1){
+                pdv5.setAlpha(0);
+                pdv4.setAlpha(0);
+                pdv3.setAlpha(0);
+                pdv2.setAlpha(0);
+                pdv1.setAlpha(1);
+            }
+       }
+
         // ----- controles clavier ----- //
         if (keyD.isDown){
             player.setVelocityX(200);
@@ -177,5 +294,159 @@ class Scene_01 extends Phaser.Scene{
             }
         }
             
+    }
+}
+
+function tirer(player) {
+    if (bulletOn == true){
+        var coefDir;
+        if (player.direction == 'left') { 
+            coefDir = -1; 
+        } else { 
+            coefDir = 1 }
+        // on crée la balle a coté du joueur
+        bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, 'gateau');
+        // parametres physiques de la balle.
+        bullet.setCollideWorldBounds(false);
+        bullet.body.allowGravity =false;
+        bullet.setVelocity(500 * coefDir, 0); // vitesse en x et en y
+        bulletOn = false;
+        }
+}
+
+function killEnnemi(){
+    etat_ennemi = false;
+    if (etat_ennemi == false){
+        ennemi_cerveau.destroy();
+        gateau.setAlpha(1);
+        bonbon.setAlpha(1);
+        gateau.setX(ennemi_cerveau.x);
+        gateau.setY(ennemi_cerveau.y);
+        visibleGateau = true;
+
+        bonbon.setX(ennemi_cerveau.x + 30);
+        bonbon.setY(ennemi_cerveau.y + 20);
+        visibleBonbon = true;
+        
+    }
+}
+
+function dropCleS2(){
+    if(dropCle == true){
+        scoreCle += 1;
+        cle.destroy();
+        texte_cle.setText(scoreCle);
+        dropCle = false;
+    }
+}
+
+function dropBonbonS2(){
+    
+    if(visibleBonbon == true && dropBonbon == true){  
+        scoreBonbon +=7;
+        bonbon.destroy(true,true);
+        texte_bonbon.setText(scoreBonbon);
+        dropBonbon = false;
+    }
+}
+
+function dropGateauS2(){
+    
+    if(visibleGateau == true && dropGateau == true){
+        scoreGateau +=1;
+        gateau.destroy(true,true);
+        texte_gateau.setText(scoreGateau);
+        dropGateau = false;
+    }
+}
+function hit (bullet) {
+     bullet.destroy();
+}
+
+function perdPdv(){
+    
+    if(invincible == false){
+        playerPdv -= 1;
+        console.log(playerPdv);
+        if(playerPdv == 5){
+            pdv5.setAlpha(1);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 4){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(1);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 3){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(1);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 2){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(1);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 1){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(1);
+        }
+    }
+    invincible = true;
+}
+
+function heal(playerPdv,scoreGateau){
+    if(playerPdv < 5 && scoreGateau >= 1){
+        console.log(playerPdv);
+        playerPdv += 1;
+        scoreGateau -= 1;
+        texte_gateau.setText(scoreGateau);
+    }
+    if(playerPdv == 5){
+        pdv5.setAlpha(1);
+        pdv4.setAlpha(0);
+        pdv3.setAlpha(0);
+        pdv2.setAlpha(0);
+        pdv1.setAlpha(0);
+    }
+    if(playerPdv == 4){
+        pdv5.setAlpha(0);
+        pdv4.setAlpha(1);
+        pdv3.setAlpha(0);
+        pdv2.setAlpha(0);
+        pdv1.setAlpha(0);
+    }
+    if(playerPdv == 3){
+        pdv5.setAlpha(0);
+        pdv4.setAlpha(0);
+        pdv3.setAlpha(1);
+        pdv2.setAlpha(0);
+        pdv1.setAlpha(0);
+    }
+    if(playerPdv == 2){
+        pdv5.setAlpha(0);
+        pdv4.setAlpha(0);
+        pdv3.setAlpha(0);
+        pdv2.setAlpha(1);
+        pdv1.setAlpha(0);
+    }
+    if(playerPdv == 1){
+        pdv5.setAlpha(0);
+        pdv4.setAlpha(0);
+        pdv3.setAlpha(0);
+        pdv2.setAlpha(0);
+        pdv1.setAlpha(1);
     }
 }
