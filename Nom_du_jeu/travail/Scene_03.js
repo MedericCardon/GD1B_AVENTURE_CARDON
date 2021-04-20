@@ -8,14 +8,9 @@ var ennemi_cerveau1;
 var ennemi_cerveau2;
 var compteur = 150; // par défaut: 150 //
 var invincible = false;
-//var playerPdv = 5;
-var cle;
-//var scoreCle = 0;
-//var scoreGateau = 0;
-//var scoreBonbon = 0;
-//var texte_cle;
-//var texte_bonbon;
-//var texte_gateau;
+
+var cle1;
+
 var gateau1;
 var bonbon1;
 var gateau2;
@@ -41,6 +36,8 @@ var gamepad;
 var paddle;
 var padConnected;
 var pad;
+
+var nbCarte;
 
 
 
@@ -76,6 +73,7 @@ class Scene_03 extends Phaser.Scene{
         block_central_devant = this.physics.add.staticGroup();
         block_bas_s3 = this.physics.add.staticGroup();
         passage_s4 = this.physics.add.staticGroup();
+        groupeBullets = this.physics.add.group();
         
 
         block_central_devant.create(815,275,'block_devant');
@@ -122,6 +120,48 @@ class Scene_03 extends Phaser.Scene{
         player.setCollideWorldBounds(true);
         player.setVelocity(0);
 
+        pdv1 = this.physics.add.sprite(320,30,'pdv1').setAlpha(0);
+        pdv2 = this.physics.add.sprite(320,30,'pdv2').setAlpha(0);
+        pdv3 = this.physics.add.sprite(320,30,'pdv3').setAlpha(0);
+        pdv4 = this.physics.add.sprite(320,30,'pdv4').setAlpha(0);
+        pdv5 = this.physics.add.sprite(320,30,'pdv5').setAlpha(1);
+
+        if(playerPdv == 5){
+            pdv5.setAlpha(1);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 4){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(1);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 3){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(1);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 2){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(1);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 1){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(1);
+        }
+
         block_central_deriere.create(815,237,'block_arriere');
         passage_s4.create(650,0,'passageHaut_s3');
         block_bas_s3.create(1155,450,'block_bas');
@@ -143,7 +183,7 @@ class Scene_03 extends Phaser.Scene{
         keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
-        spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        boutonTire = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         keyZ.reset();
         keyQ.reset();
@@ -159,17 +199,81 @@ class Scene_03 extends Phaser.Scene{
         texte_cle = this.add.text(80, 20, scoreCle, { font: '20px Georgia', fill: '#f0acdc' });
         texte_gateau = this.add.text(160,20, scoreGateau,{font: '20px Georgia', fill: '#f0acdc' });
         texte_bonbon = this.add.text(230,19, scoreBonbon,{font: '20px Georgia', fill: '#f0acdc' });
+        texte_carte = this.add.text(80,40, nbCarte,{font: '20px Georgia', fill: '#f0acdc' });
 
-        this.physics.add.overlap(player,ennemi_cerveau1,killEnnemi1,null,this);
-        this.physics.add.overlap(player,ennemi_cerveau2,killEnnemi2,null,this);
-        this.physics.add.overlap(player,cle,dropCle,null,this);
+        this.physics.add.overlap(player,ennemi_cerveau1,perdPdv,null,this);
+        this.physics.add.overlap(player,ennemi_cerveau2,perdPdv,null,this);
+
+        this.physics.add.overlap(groupeBullets,ennemi_cerveau1,killEnnemi1,null,this);
+        this.physics.add.overlap(groupeBullets,ennemi_cerveau2,killEnnemi2,null,this);
+
+        this.physics.add.overlap(groupeBullets, ennemi_cerveau1, hit, null,this);
+        this.physics.add.overlap(groupeBullets, ennemi_cerveau2, hit, null,this);
+
         this.physics.add.overlap(player,bonbon1,dropBonbonS3_1,null,this);
         this.physics.add.overlap(player,gateau1,dropGateauS3,null,this);
         this.physics.add.overlap(player,bonbon2,dropBonbonS3_2,null,this);
         this.physics.add.overlap(player,gateau2,dropGateauS3,null,this);
+
+        
     }
 
     update(){
+
+        if ( Phaser.Input.Keyboard.JustDown(boutonTire)) {
+            tirer(player);
+        }
+
+        if(bulletOn == false){ // relance du compteur d'invulné player //
+            compteurBullet-- ;
+            if(compteurBullet == 0){
+                compteurBullet = 50;
+                bulletOn = true ;
+            }
+        }
+
+       if(keyE.isDown && playerPdv < 5 && scoreGateau >= 1){
+            console.log(scoreGateau);
+            playerPdv += 1;
+            scoreGateau -= 1;
+            texte_gateau.setText(scoreGateau);
+
+            if(playerPdv == 5){
+                pdv5.setAlpha(1);
+                pdv4.setAlpha(0);
+                pdv3.setAlpha(0);
+                pdv2.setAlpha(0);
+                pdv1.setAlpha(0);
+            }
+            if(playerPdv == 4){
+                pdv5.setAlpha(0);
+                pdv4.setAlpha(1);
+                pdv3.setAlpha(0);
+                pdv2.setAlpha(0);
+                pdv1.setAlpha(0);
+            }
+            if(playerPdv == 3){
+                pdv5.setAlpha(0);
+                pdv4.setAlpha(0);
+                pdv3.setAlpha(1);
+                pdv2.setAlpha(0);
+                pdv1.setAlpha(0);
+            }
+            if(playerPdv == 2){
+                pdv5.setAlpha(0);
+                pdv4.setAlpha(0);
+                pdv3.setAlpha(0);
+                pdv2.setAlpha(1);
+                pdv1.setAlpha(0);
+            }
+            if(playerPdv == 1){
+                pdv5.setAlpha(0);
+                pdv4.setAlpha(0);
+                pdv3.setAlpha(0);
+                pdv2.setAlpha(0);
+                pdv1.setAlpha(1);
+            }
+       }
 
         // ----- Compteurs ----- //
 
@@ -225,12 +329,75 @@ class Scene_03 extends Phaser.Scene{
 
 }
 
-function hitEnnemi(){
-    if(invincible == false){
-        invincible = true ;
-        playerPdv -= 1;
-    }
+function tirer(player) {
+    if(nbCarte >= 1){
+        if (bulletOn == true){
+            var coefDir;
+            if (player.direction == 'left') { 
+                coefDir = -1; 
+            } else { 
+                coefDir = 1 }
+            // on crée la balle a coté du joueur
+            bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, 'carte');
+            // parametres physiques de la balle.
+            bullet.setCollideWorldBounds(false);
+            bullet.body.allowGravity =false;
+            bullet.setVelocity(500 * coefDir, 0); // vitesse en x et en y
+            bulletOn = false;
+            nbCarte -=1;
+            texte_carte.setText(nbCarte);
+            }
+        }
 }
+
+function hit (bullet) {
+    bullet.destroy();
+}
+
+function perdPdv(){
+    
+    if(invincible == false){
+        playerPdv -= 1;
+        console.log(playerPdv);
+        if(playerPdv == 5){
+            pdv5.setAlpha(1);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 4){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(1);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 3){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(1);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 2){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(1);
+            pdv1.setAlpha(0);
+        }
+        if(playerPdv == 1){
+            pdv5.setAlpha(0);
+            pdv4.setAlpha(0);
+            pdv3.setAlpha(0);
+            pdv2.setAlpha(0);
+            pdv1.setAlpha(1);
+        }
+    }
+    invincible = true;
+}
+
 function killEnnemi1(){
     ennemi_cerveau1.destroy();
     gateau1.setAlpha(1);

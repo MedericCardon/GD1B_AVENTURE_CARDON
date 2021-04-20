@@ -21,6 +21,7 @@ var scoreBonbon = 0;
 var texte_cle;
 var texte_bonbon;
 var texte_gateau;
+var texte_carte;
 var gateau;
 var bonbon;
 
@@ -34,12 +35,22 @@ var keyQ;
 var keyS;
 var keyD;
 var keyE;
-var spaceBar;
+var boutonTire;
 
 var gamepad;
 var paddle;
 var padConnected;
 var pad;
+
+var carte;
+var nbCarte = 0;
+var lanceCarte = false;
+var etat_carte = true;
+
+var compteurBullet = 50;
+var bulletOn = true;
+var groupeBullets;
+var bullet;
 
 
 
@@ -64,6 +75,8 @@ class Scene_01 extends Phaser.Scene{
         this.load.image('pdv3', 'assets/04_items/Item_collectibles-assets/pdv_3.png')
         this.load.image('pdv2', 'assets/04_items/Item_collectibles-assets/pdv_2.png')
         this.load.image('pdv1', 'assets/04_items/Item_collectibles-assets/pdv_1.png')
+        this.load.image('carte', 'assets/04_items/Item_collectibles-assets/carte.png')
+
         
 
         // ----- Items & HUD ----- //
@@ -84,7 +97,7 @@ class Scene_01 extends Phaser.Scene{
         blockCentral = this.physics.add.staticGroup(); // Le personnage passe derrière //
         blockCentral_2 = this.physics.add.staticGroup(); // Le personnage passe devant //
         arbre = this.physics.add.staticGroup(); // arbre element de décor // 
-        
+        groupeBullets = this.physics.add.group();
         
 
        blockCentral.create(410,250,'blockCentral').setOrigin(0).setSize(250,20).setOffset(150,150);
@@ -151,11 +164,22 @@ class Scene_01 extends Phaser.Scene{
        arbre.create(460,40,'arbre').setOrigin(0);
        arbre.create(800,50,'arbre').setOrigin(0);
 
+       carte = this.physics.add.sprite(770,350,'carte');
+
+       this.tweens.add({
+        targets: carte,
+        y:340,
+        duration: 1500,
+        yoyo: true,
+        repeat: -1
+    });
+
        
        blockCentral_2.create(420,250,'blockCentral_2').setOrigin(0).setSize(0,0).setOffset(150,150);
 
         this.physics.add.overlap(player,passage_bas, changementZone, null, this);
         this.physics.add.collider(player,blockCentral);
+        this.physics.add.collider(player,carte,dropCarte,null,this);
 
 
 
@@ -167,7 +191,7 @@ class Scene_01 extends Phaser.Scene{
         keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
-        spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        boutonTire = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         keyZ.reset();
         keyQ.reset();
@@ -187,6 +211,7 @@ class Scene_01 extends Phaser.Scene{
         texte_cle = this.add.text(80, 20, scoreCle, { font: '20px Georgia', fill: '#f0acdc' });
         texte_gateau = this.add.text(160,20, scoreGateau,{font: '20px Georgia', fill: '#f0acdc' });
         texte_bonbon = this.add.text(230,19, scoreBonbon,{font: '20px Georgia', fill: '#f0acdc' });
+        texte_carte = this.add.text(80,40, nbCarte,{font: '20px Georgia', fill: '#f0acdc' });
 
         
         function changementZone(){
@@ -200,15 +225,32 @@ class Scene_01 extends Phaser.Scene{
             player.setX(700);
             player.setY(600);
         }
+
+
     }
     
     update(){
+        if ( Phaser.Input.Keyboard.JustDown(boutonTire)) {
+            tirer(player);
+        }
+
+        if(etat_carte == false){
+            carte.destroy(true,true);
+        }
 
         if(invincible == true){ // relance du compteur d'invulné player //
             compteur-- ;
             if(compteur == 0){
                 compteur = 150;
                 invincible = false ;
+            }
+        }
+
+        if(bulletOn == false){ // relance du compteur d'invulné player //
+            compteurBullet-- ;
+            if(compteurBullet == 0){
+                compteurBullet = 50;
+                bulletOn = true ;
             }
         }
         
@@ -298,19 +340,23 @@ class Scene_01 extends Phaser.Scene{
 }
 
 function tirer(player) {
-    if (bulletOn == true){
-        var coefDir;
-        if (player.direction == 'left') { 
-            coefDir = -1; 
-        } else { 
-            coefDir = 1 }
-        // on crée la balle a coté du joueur
-        bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, 'gateau');
-        // parametres physiques de la balle.
-        bullet.setCollideWorldBounds(false);
-        bullet.body.allowGravity =false;
-        bullet.setVelocity(500 * coefDir, 0); // vitesse en x et en y
-        bulletOn = false;
+    if(nbCarte >= 1){
+        if (bulletOn == true){
+            var coefDir;
+            if (player.direction == 'left') { 
+                coefDir = -1; 
+            } else { 
+                coefDir = 1 }
+            // on crée la balle a coté du joueur
+            bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, 'carte');
+            // parametres physiques de la balle.
+            bullet.setCollideWorldBounds(false);
+            bullet.body.allowGravity =false;
+            bullet.setVelocity(500 * coefDir, 0); // vitesse en x et en y
+            bulletOn = false;
+            nbCarte -=1;
+            texte_carte.setText(nbCarte);
+            }
         }
 }
 
@@ -327,38 +373,9 @@ function killEnnemi(){
         bonbon.setX(ennemi_cerveau.x + 30);
         bonbon.setY(ennemi_cerveau.y + 20);
         visibleBonbon = true;
-        
     }
 }
 
-function dropCleS2(){
-    if(dropCle == true){
-        scoreCle += 1;
-        cle.destroy();
-        texte_cle.setText(scoreCle);
-        dropCle = false;
-    }
-}
-
-function dropBonbonS2(){
-    
-    if(visibleBonbon == true && dropBonbon == true){  
-        scoreBonbon +=7;
-        bonbon.destroy(true,true);
-        texte_bonbon.setText(scoreBonbon);
-        dropBonbon = false;
-    }
-}
-
-function dropGateauS2(){
-    
-    if(visibleGateau == true && dropGateau == true){
-        scoreGateau +=1;
-        gateau.destroy(true,true);
-        texte_gateau.setText(scoreGateau);
-        dropGateau = false;
-    }
-}
 function hit (bullet) {
      bullet.destroy();
 }
@@ -449,4 +466,11 @@ function heal(playerPdv,scoreGateau){
         pdv2.setAlpha(0);
         pdv1.setAlpha(1);
     }
+}
+function dropCarte(){
+    nbCarte += 6;
+    texte_carte.setText(nbCarte);
+    carte.destroy();
+    lanceCarte = true;
+    etat_carte = false;
 }

@@ -9,23 +9,16 @@ var passageHaut;
 var passageGauche;
 var ennemi_cerveau;
 var compteur = 150; // par défaut: 150 //
-var compteurBullet = 50;
-var bulletOn = true;
+
 var invincible = false;
-//var playerPdv;
+
 var cle;
 var pdv5;
 var pdv4;
 var pdv3;
 var pdv2;
 var pdv1;
-/*var scoreCle = 0;
-var etat_ennemi = true;
-var scoreGateau = 0;
-var scoreBonbon = 0;
-var texte_cle;
-var texte_bonbon;
-var texte_gateau;*/
+
 var gateau;
 var bonbon;
 
@@ -54,8 +47,7 @@ var pad;
 
 
 
-var groupeBullets;
-var bullet;
+
 
 
 
@@ -172,7 +164,6 @@ class Scene_02 extends Phaser.Scene{
             pdv1.setAlpha(1);
         }
 
-        console.log(scoreGateau);
         
         this.add.image(0,0,'HUD').setOrigin(0);
         
@@ -232,6 +223,7 @@ class Scene_02 extends Phaser.Scene{
         texte_cle = this.add.text(80, 20, scoreCle, { font: '20px Georgia', fill: '#f0acdc' });
         texte_gateau = this.add.text(160,20, scoreGateau,{font: '20px Georgia', fill: '#f0acdc' });
         texte_bonbon = this.add.text(230,19, scoreBonbon,{font: '20px Georgia', fill: '#f0acdc' });
+        texte_carte = this.add.text(80,40, nbCarte,{font: '20px Georgia', fill: '#f0acdc' });
 
 
         
@@ -279,11 +271,9 @@ class Scene_02 extends Phaser.Scene{
     
     update(){
         
-    
-        
-    if ( Phaser.Input.Keyboard.JustDown(boutonTire)) {
-        tirer(player);
-    }
+        if ( Phaser.Input.Keyboard.JustDown(boutonTire)) {
+            tirer(player);
+        }
 
         
         if(etat_ennemi == false && dropBonbon == false && dropGateau == false){
@@ -406,19 +396,23 @@ class Scene_02 extends Phaser.Scene{
 }
 
 function tirer(player) {
-    if (bulletOn == true){
-        var coefDir;
-        if (player.direction == 'left') { 
-            coefDir = -1; 
-        } else { 
-            coefDir = 1 }
-        // on crée la balle a coté du joueur
-        bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, 'gateau');
-        // parametres physiques de la balle.
-        bullet.setCollideWorldBounds(false);
-        bullet.body.allowGravity =false;
-        bullet.setVelocity(500 * coefDir, 0); // vitesse en x et en y
-        bulletOn = false;
+    if(nbCarte >= 1){
+        if (bulletOn == true){
+            var coefDir;
+            if (player.direction == 'left') { 
+                coefDir = -1; 
+            } else { 
+                coefDir = 1 }
+            // on crée la balle a coté du joueur
+            bullet = groupeBullets.create(player.x + (25 * coefDir), player.y - 4, 'carte');
+            // parametres physiques de la balle.
+            bullet.setCollideWorldBounds(false);
+            bullet.body.allowGravity =false;
+            bullet.setVelocity(500 * coefDir, 0); // vitesse en x et en y
+            bulletOn = false;
+            nbCarte -=1;
+            texte_carte.setText(nbCarte);
+            }
         }
 }
 
