@@ -8,7 +8,11 @@ var blockDroit;
 var passageHaut;
 var passageGauche;
 var ennemi_cerveau;
+var etat_ennemi = true;
+var pdv_ennemi_cerveau = 3;
 var compteur = 150; // par défaut: 150 //
+var compteurEnnemi = 50;
+var ennemiInvulne = false;
 
 var invincible = false;
 
@@ -44,6 +48,9 @@ var gamepad;
 var paddle;
 var padConnected;
 var pad;
+
+var carte2;
+var etat_carte2 = true;
 
 
 
@@ -167,6 +174,7 @@ class Scene_02 extends Phaser.Scene{
         
         this.add.image(0,0,'HUD').setOrigin(0);
         
+        carte2 = this.physics.add.sprite(270,200,'carte');
 
         blockCentral_s2.create(20,150,'blockCentral_scene2').setOrigin(0).setSize(300,50).setOffset(590,230);
         
@@ -185,15 +193,16 @@ class Scene_02 extends Phaser.Scene{
         this.physics.add.overlap(player,passageHaut,changementZone2, null, this);
         this.physics.add.overlap(player,passageGauche,changementZone1, null, this);
         this.physics.add.collider(player,blockCentral_s2);
+        this.physics.add.overlap(groupeBullets, ennemi_cerveau, killEnnemi, null,this);
         this.physics.add.overlap(player,ennemi_cerveau,perdPdv,null,this);
-        this.physics.add.overlap(groupeBullets,ennemi_cerveau,killEnnemi,null,this);
-        this.physics.add.overlap(groupeBullets, ennemi_cerveau, hit, null,this);
-        this.physics.add.overlap(groupeBullets, blockCentral_s2, hit, null,this);
-        this.physics.add.overlap(groupeBullets, maison1, hit, null,this);
+        this.physics.add.overlap(groupeBullets, blockCentral_s2, hitCarte, null,this);
+        this.physics.add.overlap(groupeBullets, maison1, hitCarte, null,this);
         this.physics.add.overlap(player,cle,dropCleS2,null,this);
         this.physics.add.overlap(player,bonbon,dropBonbonS2,null,this);
         this.physics.add.overlap(player,gateau,dropGateauS2,null,this);
         this.physics.add.collider(player,maison1);
+        this.physics.add.overlap(player,carte2,dropCarte2,null,this);
+
 
         
 
@@ -274,6 +283,9 @@ class Scene_02 extends Phaser.Scene{
         if ( Phaser.Input.Keyboard.JustDown(boutonTire)) {
             tirer(player);
         }
+        if(etat_carte == false){
+            carte.destroy(true,true);
+        }
 
         
         if(etat_ennemi == false && dropBonbon == false && dropGateau == false){
@@ -289,6 +301,9 @@ class Scene_02 extends Phaser.Scene{
         }
         if(dropCle == false){
             cle.destroy(true,true);
+        }
+        if(etat_carte2 == false){
+            carte2.destroy(true,true);
         }
 
         // ----- Compteurs ----- //
@@ -306,6 +321,14 @@ class Scene_02 extends Phaser.Scene{
             if(compteurBullet == 0){
                 compteurBullet = 50;
                 bulletOn = true ;
+            }
+        }
+
+        if(ennemiInvulne == true){ // relance du compteur d'invulné player //
+            compteurEnnemi-- ;
+            if(compteurEnnemi == 0){
+                compteurEnnemi = 50;
+                ennemiInvulne = false;
             }
         }
 
@@ -355,7 +378,9 @@ class Scene_02 extends Phaser.Scene{
         if (keyD.isDown){
             player.direction = 'right';
             player.setVelocityX(200);
-            ennemi_cerveau.anims.play('move_ennemi_cerveau');
+            if(etat_ennemi == true){
+                ennemi_cerveau.anims.play('move_ennemi_cerveau');
+            }
             player.setFlipX(false);
         }
         else if (keyQ.isDown){
@@ -416,23 +441,6 @@ function tirer(player) {
         }
 }
 
-function killEnnemi(){
-    etat_ennemi = false;
-    if (etat_ennemi == false){
-        ennemi_cerveau.destroy();
-        gateau.setAlpha(1);
-        bonbon.setAlpha(1);
-        gateau.setX(ennemi_cerveau.x);
-        gateau.setY(ennemi_cerveau.y);
-        visibleGateau = true;
-
-        bonbon.setX(ennemi_cerveau.x + 30);
-        bonbon.setY(ennemi_cerveau.y + 20);
-        visibleBonbon = true;
-        
-    }
-}
-
 function dropCleS2(){
     if(dropCle == true){
         scoreCle += 1;
@@ -461,9 +469,34 @@ function dropGateauS2(){
         dropGateau = false;
     }
 }
-function hit (bullet) {
-     bullet.destroy();
+function killEnnemi () {
+
+    if(ennemiInvulne == false){
+        pdv_ennemi_cerveau -= 1;
+        bullet.destroy();
+        console.log(pdv_ennemi_cerveau);
+    }
+    ennemiInvulne = true;
+    if(pdv_ennemi_cerveau <= 0){
+        etat_ennemi = false;
+        if (etat_ennemi == false){
+            ennemi_cerveau.destroy();
+            gateau.setAlpha(1);
+            bonbon.setAlpha(1);
+            gateau.setX(ennemi_cerveau.x);
+            gateau.setY(ennemi_cerveau.y);
+            visibleGateau = true;
+            bonbon.setX(ennemi_cerveau.x + 30);
+            bonbon.setY(ennemi_cerveau.y + 20);
+            visibleBonbon = true; 
+        }
+    }
 }
+
+function hitCarte(){
+    bullet.destroy();
+}
+
 function perdPdv(){
     
     if(invincible == false){
@@ -506,6 +539,14 @@ function perdPdv(){
         }
     }
     invincible = true;
+}
+
+function dropCarte2(){
+    nbCarte += 6;
+    texte_carte.setText(nbCarte);
+    carte2.destroy();
+    lanceCarte = true;
+    etat_carte2 = false;
 }
 
 

@@ -4,8 +4,17 @@ var block_central_devant;
 var block_central_deriere;
 var block_bas_s3;
 var passage_s4;
+var passage_s2;
 var ennemi_cerveau1;
 var ennemi_cerveau2;
+var compteurEnnemi1 = 50;
+var ennemiInvulne1 = false;
+var compteurEnnemi2 = 50;
+var ennemiInvulne2 = false;
+var pdvEnnemi1 = 3;
+var pdvEnnemi2 = 2;
+var etat_ennemi1 = true;
+var etat_ennemi2 = true;
 var compteur = 150; // par défaut: 150 //
 var invincible = false;
 
@@ -18,6 +27,8 @@ var bonbon2;
 
 var dropBonbon1 = true;
 var dropBonbon2 = true;
+
+var dropGateau1 = true;
 
 var visibleGateau1 = false;
 var visibleBonbon1 = false;
@@ -73,6 +84,7 @@ class Scene_03 extends Phaser.Scene{
         block_central_devant = this.physics.add.staticGroup();
         block_bas_s3 = this.physics.add.staticGroup();
         passage_s4 = this.physics.add.staticGroup();
+        passage_s2 = this.physics.add.staticGroup();
         groupeBullets = this.physics.add.group();
         
 
@@ -116,7 +128,7 @@ class Scene_03 extends Phaser.Scene{
             repeat: -1
         });
 
-        player = this.physics.add.sprite(200, 200, 'player');
+        player = this.physics.add.sprite(1230, 350, 'player');
         player.setCollideWorldBounds(true);
         player.setVelocity(0);
 
@@ -164,6 +176,7 @@ class Scene_03 extends Phaser.Scene{
 
         block_central_deriere.create(815,237,'block_arriere');
         passage_s4.create(650,0,'passageHaut_s3');
+        passage_s2.create(1280,350,'passageGauche_s2');
         block_bas_s3.create(1155,450,'block_bas');
 
         this.add.image(0,0,'arbres').setOrigin(0).setScrollFactor(0);
@@ -201,15 +214,17 @@ class Scene_03 extends Phaser.Scene{
         texte_bonbon = this.add.text(230,19, scoreBonbon,{font: '20px Georgia', fill: '#f0acdc' });
         texte_carte = this.add.text(80,40, nbCarte,{font: '20px Georgia', fill: '#f0acdc' });
 
+        function changementZone2(){
+            this.scene.start("Scene_02");
+            console.log("changement");
+        }
+
         this.physics.add.overlap(player,ennemi_cerveau1,perdPdv,null,this);
         this.physics.add.overlap(player,ennemi_cerveau2,perdPdv,null,this);
 
         this.physics.add.overlap(groupeBullets,ennemi_cerveau1,killEnnemi1,null,this);
         this.physics.add.overlap(groupeBullets,ennemi_cerveau2,killEnnemi2,null,this);
-
-        this.physics.add.overlap(groupeBullets, ennemi_cerveau1, hit, null,this);
-        this.physics.add.overlap(groupeBullets, ennemi_cerveau2, hit, null,this);
-
+        this.physics.add.overlap(player,passage_s2,changementZone2,null,this);
         this.physics.add.overlap(player,bonbon1,dropBonbonS3_1,null,this);
         this.physics.add.overlap(player,gateau1,dropGateauS3,null,this);
         this.physics.add.overlap(player,bonbon2,dropBonbonS3_2,null,this);
@@ -219,6 +234,49 @@ class Scene_03 extends Phaser.Scene{
     }
 
     update(){
+
+        if(etat_ennemi1 == false && dropBonbon1 == false && dropGateau1 == false){
+            ennemi_cerveau1.destroy(true,true);
+            bonbon1.destroy(true,true);
+            gateau1.destroy(true,true);
+        }
+        if(dropBonbon1 == false){
+            bonbon1.destroy(true,true);
+        }
+        if(dropGateau1 == false){
+            gateau1.destroy(true,true);
+        }
+        if(etat_ennemi2 == false && dropBonbon2 == false){
+            ennemi_cerveau2.destroy(true,true);
+            bonbon2.destroy(true,true);
+        }
+        if(dropBonbon2 == false){
+            bonbon2.destroy(true,true);
+        }
+
+        if(invincible == true){ // relance du compteur d'invulné player //
+            compteur-- ;
+            if(compteur == 0){
+                compteur = 150;
+                invincible = false ;
+            }
+        }
+
+        if(ennemiInvulne1 == true){ // relance du compteur d'invulné player //
+            compteurEnnemi1-- ;
+            if(compteurEnnemi1 == 0){
+                compteurEnnemi1 = 50;
+                ennemiInvulne1 = false;
+            }
+        }
+
+        if(ennemiInvulne2 == true){ // relance du compteur d'invulné player //
+            compteurEnnemi2-- ;
+            if(compteurEnnemi2 == 0){
+                compteurEnnemi2 = 50;
+                ennemiInvulne2 = false;
+            }
+        }
 
         if ( Phaser.Input.Keyboard.JustDown(boutonTire)) {
             tirer(player);
@@ -287,8 +345,12 @@ class Scene_03 extends Phaser.Scene{
 
         if (keyD.isDown){
             player.setVelocityX(200);
-            ennemi_cerveau1.anims.play('move_ennemi_cerveau');
-            ennemi_cerveau2.anims.play('move_ennemi_cerveau');
+                if (etat_ennemi1 == true){
+                    ennemi_cerveau1.anims.play('move_ennemi_cerveau');
+                }
+                if(etat_ennemi2 == true){  
+                    ennemi_cerveau2.anims.play('move_ennemi_cerveau');
+                }
             player.setFlipX(false);
         }
         else if (keyQ.isDown){
@@ -350,7 +412,7 @@ function tirer(player) {
         }
 }
 
-function hit (bullet) {
+function hitCarte (bullet) {
     bullet.destroy();
 }
 
@@ -398,25 +460,45 @@ function perdPdv(){
     invincible = true;
 }
 
-function killEnnemi1(){
-    ennemi_cerveau1.destroy();
-    gateau1.setAlpha(1);
-    bonbon1.setAlpha(1);
-    gateau1.setX(ennemi_cerveau1.x);
-    gateau1.setY(ennemi_cerveau1.y);
-    visibleGateau1 = true;
-    bonbon1.setX(ennemi_cerveau1.x + 30);
-    bonbon1.setY(ennemi_cerveau1.y + 20);
-    visibleBonbon1 = true;
+function killEnnemi1 () {
+    if(ennemiInvulne1 == false){
+        pdvEnnemi1 -= 1;
+        bullet.destroy();
+    }
+    ennemiInvulne1 = true;
+    if(pdvEnnemi1 <= 0){
+        etat_ennemi1 = false;
+        if (etat_ennemi1 == false){
+            ennemi_cerveau1.destroy();
+            gateau1.setAlpha(1);
+            bonbon1.setAlpha(1);
+            gateau1.setX(ennemi_cerveau1.x);
+            gateau1.setY(ennemi_cerveau1.y);
+            visibleGateau1 = true;
+            bonbon1.setX(ennemi_cerveau1.x + 30);
+            bonbon1.setY(ennemi_cerveau1.y + 20);
+            visibleBonbon1 = true; 
+        }
+    }
 }
 
-function killEnnemi2(){
-    ennemi_cerveau2.destroy();
-    bonbon2.setAlpha(1);
-    bonbon2.setX(ennemi_cerveau2.x + 30);
-    bonbon2.setY(ennemi_cerveau2.y + 20);
-    visibleBonbon2 = true;
-    
+function killEnnemi2 () {
+    if(ennemiInvulne2 == false){
+        pdvEnnemi2 -= 1;
+        bullet.destroy();
+    }
+    ennemiInvulne2 = true;
+    if(pdvEnnemi2 <= 0){
+        etat_ennemi2 = false;
+        if (etat_ennemi2 == false){
+            etat_ennemi2 = false;
+        ennemi_cerveau2.destroy();
+        bonbon2.setAlpha(1);
+        bonbon2.setX(ennemi_cerveau2.x + 30);
+        bonbon2.setY(ennemi_cerveau2.y + 20);
+        visibleBonbon2 = true;
+        }
+    }
 }
 
 function dropCleS3(){
@@ -450,5 +532,6 @@ function dropGateauS3(){
         scoreGateau +=1;
         gateau1.destroy(true,true);
         texte_gateau.setText(scoreGateau);
+        dropGateau1 = false;
     }
 }

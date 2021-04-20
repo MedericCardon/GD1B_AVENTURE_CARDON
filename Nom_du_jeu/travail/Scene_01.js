@@ -15,7 +15,6 @@ var pdv1;
 var playerPdv = 5;
 var cle;
 var scoreCle = 0;
-var etat_ennemi = true;
 var scoreGateau = 0;
 var scoreBonbon = 0;
 var texte_cle;
@@ -154,11 +153,6 @@ class Scene_01 extends Phaser.Scene{
             pdv1.setAlpha(1);
         }
 
-        console.log(scoreGateau);
-        
-        
-        
-        
        // ----- Arbres ----- //
 
        arbre.create(460,40,'arbre').setOrigin(0);
@@ -360,7 +354,7 @@ function tirer(player) {
         }
 }
 
-function killEnnemi(){
+/*function killEnnemi(){
     etat_ennemi = false;
     if (etat_ennemi == false){
         ennemi_cerveau.destroy();
@@ -374,11 +368,11 @@ function killEnnemi(){
         bonbon.setY(ennemi_cerveau.y + 20);
         visibleBonbon = true;
     }
-}
+}*/
 
-function hit (bullet) {
+/*function hit (bullet) {
      bullet.destroy();
-}
+}*/
 
 function perdPdv(){
     
