@@ -344,6 +344,7 @@ class Scene_03 extends Phaser.Scene{
         }
 
         if (keyD.isDown){
+            player.direction = 'right';
             player.setVelocityX(200);
                 if (etat_ennemi1 == true){
                     ennemi_cerveau1.anims.play('move_ennemi_cerveau');
@@ -356,6 +357,7 @@ class Scene_03 extends Phaser.Scene{
         else if (keyQ.isDown){
             player.setVelocityX(-200);
             player.setFlipX(true);
+            player.direction = 'left';
         }
         else if (keyD.isUp && keyQ.isUp){
             player.setVelocityX(0);
