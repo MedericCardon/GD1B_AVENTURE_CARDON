@@ -129,11 +129,11 @@ class Scene_02 extends Phaser.Scene{
         player.setCollideWorldBounds(true);
         player.setVelocity(0);
 
-        pdv1 = this.physics.add.sprite(320,30,'pdv1').setAlpha(0);
-        pdv2 = this.physics.add.sprite(320,30,'pdv2').setAlpha(0);
-        pdv3 = this.physics.add.sprite(320,30,'pdv3').setAlpha(0);
-        pdv4 = this.physics.add.sprite(320,30,'pdv4').setAlpha(0);
-        pdv5 = this.physics.add.sprite(320,30,'pdv5').setAlpha(1);
+        pdv1 = this.physics.add.sprite(40,40,'pdv1').setAlpha(0);
+        pdv2 = this.physics.add.sprite(40,40,'pdv2').setAlpha(0);
+        pdv3 = this.physics.add.sprite(40,40,'pdv3').setAlpha(0);
+        pdv4 = this.physics.add.sprite(40,40,'pdv4').setAlpha(0);
+        pdv5 = this.physics.add.sprite(40,40,'pdv5').setAlpha(0);
 
         if(playerPdv == 5){
             pdv5.setAlpha(1);
@@ -172,7 +172,7 @@ class Scene_02 extends Phaser.Scene{
         }
 
         
-        this.add.image(0,0,'HUD').setOrigin(0);
+        this.add.image(50,10,'HUD').setOrigin(0);
         
         carte2 = this.physics.add.sprite(270,200,'carte');
 
@@ -229,10 +229,10 @@ class Scene_02 extends Phaser.Scene{
         });
 
         // ----- Score texte ----- //
-        texte_cle = this.add.text(80, 20, scoreCle, { font: '20px Georgia', fill: '#f0acdc' });
-        texte_gateau = this.add.text(160,20, scoreGateau,{font: '20px Georgia', fill: '#f0acdc' });
-        texte_bonbon = this.add.text(230,19, scoreBonbon,{font: '20px Georgia', fill: '#f0acdc' });
-        texte_carte = this.add.text(80,40, nbCarte,{font: '20px Georgia', fill: '#f0acdc' });
+        texte_cle = this.add.text(168, 28, scoreCle, { font: '20px Georgia', fill: '#f0acdc' });
+        texte_bonbon = this.add.text(250,28, scoreBonbon,{font: '20px Georgia', fill: '#f0acdc' });
+        texte_gateau = this.add.text(345,28, scoreGateau,{font: '20px Georgia', fill: '#f0acdc' });
+        texte_carte = this.add.text(430,28, nbCarte,{font: '20px Georgia', fill: '#f0acdc' });
 
 
         
@@ -379,7 +379,7 @@ class Scene_02 extends Phaser.Scene{
             player.direction = 'right';
             player.setVelocityX(200);
             if(etat_ennemi == true){
-                ennemi_cerveau.anims.play('move_ennemi_cerveau');
+            ennemi_cerveau.anims.play('move_ennemi_cerveau');
             }
             player.setFlipX(false);
         }

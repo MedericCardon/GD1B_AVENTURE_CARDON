@@ -18,6 +18,7 @@ var etat_ennemi2 = true;
 var compteur = 150; // par défaut: 150 //
 var invincible = false;
 
+
 var cle1;
 
 var gateau1;
@@ -36,12 +37,6 @@ var visibleBonbon1 = false;
 var visibleGateau2 = false;
 var visibleBonbon2 = false;
 
-var keyZ;
-var keyQ;
-var keyS;
-var keyD;
-var keyE;
-var spaceBar;
 
 var gamepad;
 var paddle;
@@ -132,11 +127,22 @@ class Scene_03 extends Phaser.Scene{
         player.setCollideWorldBounds(true);
         player.setVelocity(0);
 
-        pdv1 = this.physics.add.sprite(320,30,'pdv1').setAlpha(0);
-        pdv2 = this.physics.add.sprite(320,30,'pdv2').setAlpha(0);
-        pdv3 = this.physics.add.sprite(320,30,'pdv3').setAlpha(0);
-        pdv4 = this.physics.add.sprite(320,30,'pdv4').setAlpha(0);
-        pdv5 = this.physics.add.sprite(320,30,'pdv5').setAlpha(1);
+        
+
+        block_central_deriere.create(815,237,'block_arriere');
+        passage_s4.create(650,0,'passageHaut_s3');
+        passage_s2.create(1280,350,'passageGauche_s2');
+        block_bas_s3.create(1155,450,'block_bas');
+
+        
+
+        this.add.image(0,0,'arbres').setOrigin(0).setScrollFactor(0);
+
+        pdv1 = this.physics.add.sprite(40,40,'pdv1').setAlpha(0);
+        pdv2 = this.physics.add.sprite(40,40,'pdv2').setAlpha(0);
+        pdv3 = this.physics.add.sprite(40,40,'pdv3').setAlpha(0);
+        pdv4 = this.physics.add.sprite(40,40,'pdv4').setAlpha(0);
+        pdv5 = this.physics.add.sprite(40,40,'pdv5').setAlpha(0);
 
         if(playerPdv == 5){
             pdv5.setAlpha(1);
@@ -173,15 +179,8 @@ class Scene_03 extends Phaser.Scene{
             pdv2.setAlpha(0);
             pdv1.setAlpha(1);
         }
-
-        block_central_deriere.create(815,237,'block_arriere');
-        passage_s4.create(650,0,'passageHaut_s3');
-        passage_s2.create(1280,350,'passageGauche_s2');
-        block_bas_s3.create(1155,450,'block_bas');
-
-        this.add.image(0,0,'arbres').setOrigin(0).setScrollFactor(0);
         
-        this.add.image(0,0,'HUD').setOrigin(0);
+        this.add.image(50,10,'HUD').setOrigin(0);
 
         gateau1 = this.physics.add.sprite(ennemi_cerveau1.x,ennemi_cerveau1.y,'gateau').setAlpha(0);
         bonbon1 = this.physics.add.sprite(ennemi_cerveau1.x,ennemi_cerveau1.y,'bonbon').setAlpha(0);
@@ -209,13 +208,18 @@ class Scene_03 extends Phaser.Scene{
         });
 
         // ----- Score texte ----- //
-        texte_cle = this.add.text(80, 20, scoreCle, { font: '20px Georgia', fill: '#f0acdc' });
-        texte_gateau = this.add.text(160,20, scoreGateau,{font: '20px Georgia', fill: '#f0acdc' });
-        texte_bonbon = this.add.text(230,19, scoreBonbon,{font: '20px Georgia', fill: '#f0acdc' });
-        texte_carte = this.add.text(80,40, nbCarte,{font: '20px Georgia', fill: '#f0acdc' });
+        texte_cle = this.add.text(168, 28, scoreCle, { font: '20px Georgia', fill: '#f0acdc' });
+        texte_bonbon = this.add.text(250,28, scoreBonbon,{font: '20px Georgia', fill: '#f0acdc' });
+        texte_gateau = this.add.text(345,28, scoreGateau,{font: '20px Georgia', fill: '#f0acdc' });
+        texte_carte = this.add.text(430,28, nbCarte,{font: '20px Georgia', fill: '#f0acdc' });
 
-        function changementZone2(){
+        function changementZone3(){
             this.scene.start("Scene_02");
+            console.log("changement");
+        }
+
+        function changementZone4(){
+            this.scene.start("Scene_04");
             console.log("changement");
         }
 
@@ -224,7 +228,8 @@ class Scene_03 extends Phaser.Scene{
 
         this.physics.add.overlap(groupeBullets,ennemi_cerveau1,killEnnemi1,null,this);
         this.physics.add.overlap(groupeBullets,ennemi_cerveau2,killEnnemi2,null,this);
-        this.physics.add.overlap(player,passage_s2,changementZone2,null,this);
+        this.physics.add.overlap(player,passage_s2,changementZone3,null,this);
+        this.physics.add.overlap(player,passage_s4,changementZone4,null,this);
         this.physics.add.overlap(player,bonbon1,dropBonbonS3_1,null,this);
         this.physics.add.overlap(player,gateau1,dropGateauS3,null,this);
         this.physics.add.overlap(player,bonbon2,dropBonbonS3_2,null,this);

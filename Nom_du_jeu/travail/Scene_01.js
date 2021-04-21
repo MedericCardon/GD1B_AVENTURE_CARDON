@@ -106,16 +106,16 @@ class Scene_01 extends Phaser.Scene{
         player = this.physics.add.sprite(300, 300, 'player');
         player.setCollideWorldBounds(true);
 
-        this.add.image(0,0,'HUD').setOrigin(0);
+        this.add.image(50,10,'HUD').setOrigin(0);
         
         
         
         
-        pdv1 = this.physics.add.sprite(320,30,'pdv1').setAlpha(0);
-        pdv2 = this.physics.add.sprite(320,30,'pdv2').setAlpha(0);
-        pdv3 = this.physics.add.sprite(320,30,'pdv3').setAlpha(0);
-        pdv4 = this.physics.add.sprite(320,30,'pdv4').setAlpha(0);
-        pdv5 = this.physics.add.sprite(320,30,'pdv5').setAlpha(0);
+        pdv1 = this.physics.add.sprite(40,40,'pdv1').setAlpha(0);
+        pdv2 = this.physics.add.sprite(40,40,'pdv2').setAlpha(0);
+        pdv3 = this.physics.add.sprite(40,40,'pdv3').setAlpha(0);
+        pdv4 = this.physics.add.sprite(40,40,'pdv4').setAlpha(0);
+        pdv5 = this.physics.add.sprite(40,40,'pdv5').setAlpha(0);
 
         if(playerPdv == 5){
             pdv5.setAlpha(1);
@@ -202,10 +202,10 @@ class Scene_01 extends Phaser.Scene{
 
         // ----- score texte ----- //
 
-        texte_cle = this.add.text(80, 20, scoreCle, { font: '20px Georgia', fill: '#f0acdc' });
-        texte_gateau = this.add.text(160,20, scoreGateau,{font: '20px Georgia', fill: '#f0acdc' });
-        texte_bonbon = this.add.text(230,19, scoreBonbon,{font: '20px Georgia', fill: '#f0acdc' });
-        texte_carte = this.add.text(80,40, nbCarte,{font: '20px Georgia', fill: '#f0acdc' });
+        texte_cle = this.add.text(168, 28, scoreCle, { font: '20px Georgia', fill: '#f0acdc' });
+        texte_bonbon = this.add.text(250,28, scoreBonbon,{font: '20px Georgia', fill: '#f0acdc' });
+        texte_gateau = this.add.text(345,28, scoreGateau,{font: '20px Georgia', fill: '#f0acdc' });
+        texte_carte = this.add.text(430,28, nbCarte,{font: '20px Georgia', fill: '#f0acdc' });
 
         
         function changementZone(){
