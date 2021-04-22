@@ -18,12 +18,16 @@ var visibleCle2 = false;
 var cle2Drop = true;
 
 var oni;
+var oniDisc = false;
 var dialogue_01;
 var dialogue01 = true;
 var dialogue_02;
 var dialogue_03;
 var keyA;
 var entree_tente = false;
+
+var carte3;
+var etat_carte3 = true;
 
 
 
@@ -74,7 +78,7 @@ class Scene_04 extends Phaser.Scene{
         decor_maison_s4.create(0,0,'decor_maison').setOrigin(0);
         
         
-        decor_tente_s4.create(829,0,'decor_tente').setOrigin(0).setScale(1.02);
+        decor_tente_s4.create(829,0,'decor_tente').setOrigin(0).setScale(1.02).setSize(200,30).setOffset(350,280);
         
 
         boss_cerveau = this.physics.add.sprite(100,200,'boss_cerveau').setOrigin(0).setSize(200,150).setOffset(50,10);
@@ -176,11 +180,28 @@ class Scene_04 extends Phaser.Scene{
             console.log("changement");
         }
 
+        function changementZone6(){
+            if(entree_tente == true){
+                this.scene.start("Scene_05");
+                console.log("changement");
+            }
+        }
+
         
 
         cle2 = this.physics.add.sprite(boss_cerveau.x,boss_cerveau.y,'cle').setAlpha(0);
         cle2.body.setAllowGravity(false); 
         cle2.setCollideWorldBounds(true);
+
+        carte3 = this.physics.add.sprite(340,150,'carte');
+
+        this.tweens.add({
+            targets: carte3,
+            y:160,
+            duration: 1500,
+            yoyo: true,
+            repeat: -1
+        });
 
         
 
@@ -188,6 +209,9 @@ class Scene_04 extends Phaser.Scene{
         this.physics.add.overlap(player,cle2,dropCle2,null,this);
         this.physics.add.overlap(groupeBullets,boss_cerveau,killBoss,null,this);
         this.physics.add.collider(player,boss_cerveau,perdPdv,null,this);
+        this.physics.add.overlap(player,carte3,dropCarte3,null,this);
+        this.physics.add.overlap(player,decor_tente_s4,changementZone6,null,this);
+        
 
         this.anims.create({
             key: 'oniMove',
@@ -202,7 +226,9 @@ class Scene_04 extends Phaser.Scene{
     update(){
 
         if(Phaser.Input.Keyboard.JustDown(keyA)){
-            DialogueOni();
+            if (oniDisc == true){
+                DialogueOni();
+            }
         }
         
         
@@ -210,10 +236,18 @@ class Scene_04 extends Phaser.Scene{
         if(etat_boss == false && cle2Drop == false ){
             boss_cerveau.destroy(true,true);
             cle2.destroy(true,true);
+            oniDisc = true;
+            oni.setAlpha(1);
+            dialogue_01.setAlpha(1);
+            if(Phaser.Input.Keyboard.JustDown(keyA)){
+                DialogueOni();
+            }
         }
-
         if (cle2Drop == false){
             cle2.destroy();
+        }
+        if(etat_carte3 == false){
+            carte3.destroy(true,true);
         }
 
         if(invincible == true){ // relance du compteur d'invulné player //
@@ -409,6 +443,7 @@ function killBoss () {
             visibleCle2 = true;
             oni.setAlpha(1);
             dialogue_01.setAlpha(1);
+            oniDisc = true;
         }
     }
 }
@@ -435,4 +470,12 @@ function DialogueOni(){
         dialogue_02.setAlpha(0);
         dialogue_03.setAlpha(1);
     }
+}
+
+function dropCarte3(){
+    nbCarte += 6;
+    texte_carte.setText(nbCarte);
+    carte3.destroy();
+    lanceCarte = true;
+    etat_carte3 = false;
 }

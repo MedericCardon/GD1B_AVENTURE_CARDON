@@ -174,7 +174,15 @@ class Scene_02 extends Phaser.Scene{
         
         this.add.image(50,10,'HUD').setOrigin(0);
         
-        carte2 = this.physics.add.sprite(270,200,'carte');
+        carte2 = this.physics.add.sprite(630,550,'carte');
+
+        this.tweens.add({
+            targets: carte2,
+            y:540,
+            duration: 1500,
+            yoyo: true,
+            repeat: -1
+        });
 
         blockCentral_s2.create(20,150,'blockCentral_scene2').setOrigin(0).setSize(300,50).setOffset(590,230);
         
