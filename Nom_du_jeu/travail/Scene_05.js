@@ -26,6 +26,23 @@ var etat_boss2 = true;
 var carte4;
 var etat_carte4 = true;
 
+var tentacules_01;
+
+var potion;
+var potion_image;
+var etat_potion = false;
+var potion_active = false;
+var compteur_potion = 600;
+
+var barre_potion_01;
+var barre_potion_02;
+var barre_potion_03;
+var barre_potion_04;
+var barre_potion_05;
+var barre_potion_06;
+
+var keyF;
+
 class Scene_05 extends Phaser.Scene{
     constructor(){
         super("Scene_05");
@@ -35,15 +52,25 @@ class Scene_05 extends Phaser.Scene{
     preload(){
         this.load.image('background_s5','assets/00_background_scenes/background_scene_05-assets/background.png')
         this.load.image('arbre_s5','assets/00_background_scenes/background_scene_05-assets/arbre_s5.png')
+        this.load.image('tentacules_01','assets/00_background_scenes/background_scene_05-assets/tentacules_couloir_1.png')
         this.load.image('player','assets/02_spriteSheet_personnage/player.png');
         this.load.image('boss_cerveau','assets/03_spriteSheet_monstre_cerveau/spriteSheet_bossCerveau-assets/boss_cerveau.png');
         this.load.spritesheet('ennemi_cerveau', 'assets/03_spriteSheet_monstre_cerveau/spriteSheet_monstre_cerveau-assets/spriteSheet_monstre_cerveau.png', { frameWidth: 155.75, frameHeight: 121 });
-        this.load.image('HUD','assets/04_items/Item_collectibles-assets/HUD.png')
-        this.load.image('pdv5', 'assets/04_items/Item_collectibles-assets/pdv_5.png')
-        this.load.image('pdv4', 'assets/04_items/Item_collectibles-assets/pdv_4.png')
-        this.load.image('pdv3', 'assets/04_items/Item_collectibles-assets/pdv_3.png')
-        this.load.image('pdv2', 'assets/04_items/Item_collectibles-assets/pdv_2.png')
-        this.load.image('pdv1', 'assets/04_items/Item_collectibles-assets/pdv_1.png')
+        this.load.image('HUD','assets/04_items/Item_collectibles-assets/HUD.png');
+        this.load.image('pdv5', 'assets/04_items/Item_collectibles-assets/pdv_5.png');
+        this.load.image('pdv4', 'assets/04_items/Item_collectibles-assets/pdv_4.png');
+        this.load.image('pdv3', 'assets/04_items/Item_collectibles-assets/pdv_3.png');
+        this.load.image('pdv2', 'assets/04_items/Item_collectibles-assets/pdv_2.png');
+        this.load.image('pdv1', 'assets/04_items/Item_collectibles-assets/pdv_1.png');
+        this.load.image('potion', 'assets/04_items/Item_collectibles-assets/potion.png');
+        this.load.image('barre_potion_01', 'assets/04_items/Item_collectibles-assets/barre_potion_01.png');
+        this.load.image('barre_potion_02', 'assets/04_items/Item_collectibles-assets/barre_potion_02.png');
+        this.load.image('barre_potion_03', 'assets/04_items/Item_collectibles-assets/barre_potion_03.png');
+        this.load.image('barre_potion_04', 'assets/04_items/Item_collectibles-assets/barre_potion_04.png');
+        this.load.image('barre_potion_05', 'assets/04_items/Item_collectibles-assets/barre_potion_05.png');
+        this.load.image('barre_potion_06', 'assets/04_items/Item_collectibles-assets/barre_potion_06.png');
+
+
     }
 
     create(){
@@ -53,6 +80,13 @@ class Scene_05 extends Phaser.Scene{
 
         player = this.physics.add.sprite(300, 1940, 'player'); // 300,1940
         player.setCollideWorldBounds(true);
+
+        tentacules_01 = this.physics.add.staticGroup();
+        tentacules_01.create(510, 470,'tentacules_01').setOrigin(0).setScale(1.1).setSize(20,20).setOffset(360,440);
+        tentacules_01.create(510, 470,'tentacules_01').setOrigin(0).setScale(1.1).setSize(20,20).setOffset(385,835);
+        tentacules_01.create(510, 470,'tentacules_01').setOrigin(0).setScale(1.1).setSize(20,20).setOffset(355,1135);
+        tentacules_01.create(510, 470,'tentacules_01').setOrigin(0).setScale(1.1).setSize(20,20).setOffset(390,985);
+        tentacules_01.create(510, 470,'tentacules_01').setOrigin(0).setScale(1.1).setSize(20,20).setOffset(390,645);
 
         ennemi_cerveau3 = this.physics.add.sprite(200,1700, 'ennemi_cerveau');
         ennemi_cerveau3.body.setAllowGravity(false); // pas de gravité pour les ennemis //
@@ -130,6 +164,7 @@ class Scene_05 extends Phaser.Scene{
         keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
         keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
         boutonTire = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         
@@ -191,6 +226,22 @@ class Scene_05 extends Phaser.Scene{
         });
 
         this.add.image(50,10,'HUD').setOrigin(0).setScrollFactor(0);
+        potion_image = this.physics.add.image(50,80,'potion').setOrigin(0).setScrollFactor(0).setAlpha(0);
+        barre_potion_06 = this.physics.add.sprite(90,95,'barre_potion_06').setOrigin(0).setScrollFactor(0).setAlpha(0);
+        barre_potion_05 = this.physics.add.sprite(124,95,'barre_potion_05').setOrigin(0).setScrollFactor(0).setAlpha(0);
+        barre_potion_04 = this.physics.add.sprite(158,95,'barre_potion_04').setOrigin(0).setScrollFactor(0).setAlpha(0);
+        barre_potion_03 = this.physics.add.sprite(192,95,'barre_potion_03').setOrigin(0).setScrollFactor(0).setAlpha(0);
+        barre_potion_02 = this.physics.add.sprite(226,95,'barre_potion_02').setOrigin(0).setScrollFactor(0).setAlpha(0);
+        barre_potion_01 = this.physics.add.sprite(260,95,'barre_potion_01').setOrigin(0).setScrollFactor(0).setAlpha(0);
+
+        potion = this.physics.add.sprite(600,1400,'potion').setOrigin(0);
+        this.tweens.add({
+            targets: potion,
+            y:1420,
+            duration: 1500,
+            yoyo: true,
+            repeat: -1
+        });
 
         texte_cle = this.add.text(168, 28, scoreCle, { font: '20px Georgia', fill: '#f0acdc' }).setScrollFactor(0);
         texte_bonbon = this.add.text(250,28, scoreBonbon,{font: '20px Georgia', fill: '#f0acdc' }).setScrollFactor(0);
@@ -206,6 +257,9 @@ class Scene_05 extends Phaser.Scene{
         this.physics.add.overlap(groupeBullets,ennemi_cerveau5,killEnnemi5,null,this);
         this.physics.add.collider(player,ennemi_cerveau5,perdPdv,null,this);
         this.physics.add.overlap(player,carte4,dropCarte4,null,this);
+        this.physics.add.overlap(player,tentacules_01,perdPdv,null,this);
+        this.physics.add.overlap(player,potion,dropPotion,null,this);
+
 
     }
 
@@ -247,6 +301,57 @@ class Scene_05 extends Phaser.Scene{
             if(compteurEnnemi5 == 0){
                 compteurEnnemi5 = 50;
                 ennemiInvulne5 = false;
+            }
+        }
+
+        if ( Phaser.Input.Keyboard.JustDown(keyF)) {
+            mini();
+        }
+        if(etat_potion == true){ // relance du compteur d'invulné player //
+            compteur_potion-- ;
+            if(compteur_potion == 600){
+                barre_potion_06.setAlpha(1);
+                barre_potion_05.setAlpha(1);
+                barre_potion_04.setAlpha(1);
+                barre_potion_03.setAlpha(1);
+                barre_potion_02.setAlpha(1);
+                barre_potion_01.setAlpha(1);
+
+            }
+            if(compteur_potion < 600){
+                barre_potion_01.setAlpha(0);
+
+            }
+            if(compteur_potion <= 500){
+                barre_potion_02.setAlpha(0);
+
+            }
+            if(compteur_potion <= 400){
+                barre_potion_03.setAlpha(0);
+
+            }
+            if(compteur_potion <= 300){
+                barre_potion_04.setAlpha(0);
+
+            }
+            if(compteur_potion <= 200){
+                barre_potion_05.setAlpha(0);
+
+            }
+            if(compteur_potion <= 100){
+                barre_potion_06.setAlpha(0);
+            }
+            if(compteur_potion == 0){
+                compteur_potion = 600;
+                barre_potion_06
+                etat_potion = false;
+                player.setScale(1);
+                barre_potion_01.setAlpha(1);
+                barre_potion_02.setAlpha(1);
+                barre_potion_03.setAlpha(1);
+                barre_potion_04.setAlpha(1);
+                barre_potion_05.setAlpha(1);
+                barre_potion_06.setAlpha(1);
             }
         }
 
@@ -470,4 +575,23 @@ function dropCarte4(){
     carte4.destroy();
     lanceCarte = true;
     etat_carte4 = false;
+}
+
+function dropPotion(){
+    potion_image.setAlpha(1);
+    barre_potion_06.setAlpha(1);
+    barre_potion_05.setAlpha(1);
+    barre_potion_04.setAlpha(1);
+    barre_potion_03.setAlpha(1);
+    barre_potion_02.setAlpha(1);
+    barre_potion_01.setAlpha(1);
+    potion.destroy(true,true);
+    potion_active = true;
+}
+
+function mini(){
+    if (potion_active = true){
+        etat_potion = true;
+        player.setScale(0.5);
+    }
 }
