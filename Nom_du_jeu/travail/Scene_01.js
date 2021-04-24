@@ -195,10 +195,19 @@ class Scene_01 extends Phaser.Scene{
         
 
 
-        this.input.gamepad.once('connected', function (pad, button, index) {
-            paddle = pad;
-            padConnected = true;
-        }); 
+    
+
+        if (this.input.gamepad.total === 0){
+            this.input.gamepad.once('connected', function (pad, button, index) {
+                paddle = pad;
+                padConnected = true;
+            }); 
+        }
+        else {
+            paddle = this.input.gamepad.pad1;
+        }
+            
+    
 
         // ----- score texte ----- //
 
@@ -220,10 +229,12 @@ class Scene_01 extends Phaser.Scene{
             player.setY(600);
         }
 
-
+        this.cameras.main.fadeIn(2000);
     }
     
     update(){
+
+        
         if ( Phaser.Input.Keyboard.JustDown(boutonTire)) {
             tirer(player);
         }
@@ -293,12 +304,14 @@ class Scene_01 extends Phaser.Scene{
 
         // ----- controles clavier ----- //
         if (keyD.isDown){
+            player.direction = 'right';
             player.setVelocityX(200);
             player.setFlipX(false);
         }
         else if (keyQ.isDown){
             player.setVelocityX(-200);
             player.setFlipX(true);
+            player.direction = 'left';
         }
         else if (keyD.isUp && keyQ.isUp){
             player.setVelocityX(0);
@@ -316,11 +329,19 @@ class Scene_01 extends Phaser.Scene{
 
         if (padConnected) {
 
+            if (paddle.X){
+                tirer(player);
+            }
+
             if(paddle.right){ 
+                player.direction = 'right';
                 player.setVelocityX(200);
+                player.setFlipX(false);
             }
             if(paddle.left){ 
+                player.direction = 'left';
                 player.setVelocityX(-200);
+                player.setFlipX(true);
             }
             if(paddle.up){ 
                 player.setVelocityY(-200);
@@ -328,8 +349,50 @@ class Scene_01 extends Phaser.Scene{
             if(paddle.down){
                 player.setVelocityY(200);
             }
-        }
-            
+
+            if(paddle.Y && playerPdv < 5 && scoreGateau >= 1){
+                console.log(scoreGateau);
+                playerPdv += 1;
+                scoreGateau -= 1;
+                texte_gateau.setText(scoreGateau);
+    
+                if(playerPdv == 5){
+                    pdv5.setAlpha(1);
+                    pdv4.setAlpha(0);
+                    pdv3.setAlpha(0);
+                    pdv2.setAlpha(0);
+                    pdv1.setAlpha(0);
+                }
+                if(playerPdv == 4){
+                    pdv5.setAlpha(0);
+                    pdv4.setAlpha(1);
+                    pdv3.setAlpha(0);
+                    pdv2.setAlpha(0);
+                    pdv1.setAlpha(0);
+                }
+                if(playerPdv == 3){
+                    pdv5.setAlpha(0);
+                    pdv4.setAlpha(0);
+                    pdv3.setAlpha(1);
+                    pdv2.setAlpha(0);
+                    pdv1.setAlpha(0);
+                }
+                if(playerPdv == 2){
+                    pdv5.setAlpha(0);
+                    pdv4.setAlpha(0);
+                    pdv3.setAlpha(0);
+                    pdv2.setAlpha(1);
+                    pdv1.setAlpha(0);
+                }
+                if(playerPdv == 1){
+                    pdv5.setAlpha(0);
+                    pdv4.setAlpha(0);
+                    pdv3.setAlpha(0);
+                    pdv2.setAlpha(0);
+                    pdv1.setAlpha(1);
+                }
+           }
+        }   
     }
 }
 
@@ -354,25 +417,6 @@ function tirer(player) {
         }
 }
 
-/*function killEnnemi(){
-    etat_ennemi = false;
-    if (etat_ennemi == false){
-        ennemi_cerveau.destroy();
-        gateau.setAlpha(1);
-        bonbon.setAlpha(1);
-        gateau.setX(ennemi_cerveau.x);
-        gateau.setY(ennemi_cerveau.y);
-        visibleGateau = true;
-
-        bonbon.setX(ennemi_cerveau.x + 30);
-        bonbon.setY(ennemi_cerveau.y + 20);
-        visibleBonbon = true;
-    }
-}*/
-
-/*function hit (bullet) {
-     bullet.destroy();
-}*/
 
 function perdPdv(){
     

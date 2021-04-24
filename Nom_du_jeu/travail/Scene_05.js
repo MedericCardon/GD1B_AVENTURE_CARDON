@@ -173,6 +173,8 @@ class Scene_05 extends Phaser.Scene{
         keyS.reset();
         keyD.reset();
 
+        paddle = this.input.gamepad.pad1;
+
         pdv1 = this.physics.add.sprite(40,40,'pdv1').setAlpha(0).setScrollFactor(0);
         pdv2 = this.physics.add.sprite(40,40,'pdv2').setAlpha(0).setScrollFactor(0);
         pdv3 = this.physics.add.sprite(40,40,'pdv3').setAlpha(0).setScrollFactor(0);
@@ -264,6 +266,11 @@ class Scene_05 extends Phaser.Scene{
     }
 
     update(){
+
+        if(playerPdv == 0){
+            playerPdv = 5;
+            this.scene.start("Scene_05");
+        }
         if(invincible == true){ // relance du compteur d'invulné player //
             compteur-- ;
             if(compteur == 0){
@@ -375,7 +382,7 @@ class Scene_05 extends Phaser.Scene{
             }
         }
 
-       if(keyE.isDown && playerPdv < 5 && scoreGateau >= 1){
+       if(Phaser.Input.Keyboard.JustDown(keyE) && playerPdv < 5 && scoreGateau >= 1){
             console.log(scoreGateau);
             playerPdv += 1;
             scoreGateau -= 1;
@@ -442,8 +449,126 @@ class Scene_05 extends Phaser.Scene{
             player.setVelocityY(0);
         }
 
+        if (padConnected) {
+
+            if (paddle.X){
+                tirer(player);
+            }
+
+            if(paddle.right){ 
+                player.direction = 'right';
+                player.setVelocityX(200);
+                player.setFlipX(false);
+            }
+            if(paddle.left){ 
+                player.direction = 'left';
+                player.setVelocityX(-200);
+                player.setFlipX(true);
+            }
+            if(paddle.up){ 
+                player.setVelocityY(-200);
+            }
+            if(paddle.down){
+                player.setVelocityY(200);
+            }
+
+            if(paddle.Y && playerPdv < 5 && scoreGateau >= 1){
+                console.log(scoreGateau);
+                playerPdv += 1;
+                scoreGateau -= 1;
+                texte_gateau.setText(scoreGateau);
+    
+                if(playerPdv == 5){
+                    pdv5.setAlpha(1);
+                    pdv4.setAlpha(0);
+                    pdv3.setAlpha(0);
+                    pdv2.setAlpha(0);
+                    pdv1.setAlpha(0);
+                }
+                if(playerPdv == 4){
+                    pdv5.setAlpha(0);
+                    pdv4.setAlpha(1);
+                    pdv3.setAlpha(0);
+                    pdv2.setAlpha(0);
+                    pdv1.setAlpha(0);
+                }
+                if(playerPdv == 3){
+                    pdv5.setAlpha(0);
+                    pdv4.setAlpha(0);
+                    pdv3.setAlpha(1);
+                    pdv2.setAlpha(0);
+                    pdv1.setAlpha(0);
+                }
+                if(playerPdv == 2){
+                    pdv5.setAlpha(0);
+                    pdv4.setAlpha(0);
+                    pdv3.setAlpha(0);
+                    pdv2.setAlpha(1);
+                    pdv1.setAlpha(0);
+                }
+                if(playerPdv == 1){
+                    pdv5.setAlpha(0);
+                    pdv4.setAlpha(0);
+                    pdv3.setAlpha(0);
+                    pdv2.setAlpha(0);
+                    pdv1.setAlpha(1);
+                }
+           }
+           if ( paddle.B) {
+            mini();
+            }
+            if(etat_potion == true){ // relance du compteur d'invulné player //
+                compteur_potion-- ;
+                if(compteur_potion == 600){
+                    barre_potion_06.setAlpha(1);
+                    barre_potion_05.setAlpha(1);
+                    barre_potion_04.setAlpha(1);
+                    barre_potion_03.setAlpha(1);
+                    barre_potion_02.setAlpha(1);
+                    barre_potion_01.setAlpha(1);
+
+                }
+                if(compteur_potion < 600){
+                    barre_potion_01.setAlpha(0);
+
+                }
+                if(compteur_potion <= 500){
+                    barre_potion_02.setAlpha(0);
+
+                }
+                if(compteur_potion <= 400){
+                    barre_potion_03.setAlpha(0);
+
+                }
+                if(compteur_potion <= 300){
+                    barre_potion_04.setAlpha(0);
+
+                }
+                if(compteur_potion <= 200){
+                    barre_potion_05.setAlpha(0);
+
+                }
+                if(compteur_potion <= 100){
+                    barre_potion_06.setAlpha(0);
+                }
+                if(compteur_potion == 0){
+                    compteur_potion = 600;
+                    barre_potion_06
+                    etat_potion = false;
+                    player.setScale(1);
+                    barre_potion_01.setAlpha(1);
+                    barre_potion_02.setAlpha(1);
+                    barre_potion_03.setAlpha(1);
+                    barre_potion_04.setAlpha(1);
+                    barre_potion_05.setAlpha(1);
+                    barre_potion_06.setAlpha(1);
+                }
+            }
+        }   
     }
 }
+    
+
 
 function tirer(player) {
     if(nbCarte >= 1){

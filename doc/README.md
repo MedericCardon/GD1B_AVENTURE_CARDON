@@ -1,2 +1,0 @@
-#  GD1B_AVENTURE_CARDON
- 

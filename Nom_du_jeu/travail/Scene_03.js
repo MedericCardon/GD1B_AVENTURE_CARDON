@@ -202,10 +202,7 @@ class Scene_03 extends Phaser.Scene{
         keyS.reset();
         keyD.reset();
 
-        this.input.gamepad.once('connected', function (pad) {
-            paddle = pad;
-            padConnected = true;
-        });
+        paddle = this.input.gamepad.pad1;
 
         // ----- Score texte ----- //
         texte_cle = this.add.text(168, 28, scoreCle, { font: '20px Georgia', fill: '#f0acdc' });
@@ -223,6 +220,9 @@ class Scene_03 extends Phaser.Scene{
             console.log("changement");
         }
 
+        this.cameras.main.fadeIn(2000);
+        
+
         this.physics.add.overlap(player,ennemi_cerveau1,perdPdv,null,this);
         this.physics.add.overlap(player,ennemi_cerveau2,perdPdv,null,this);
 
@@ -239,6 +239,11 @@ class Scene_03 extends Phaser.Scene{
     }
 
     update(){
+
+        if(playerPdv == 0){
+            playerPdv = 5;
+            this.scene.start("Scene_03");
+        }
 
         if(etat_ennemi1 == false && dropBonbon1 == false && dropGateau1 == false){
             ennemi_cerveau1.destroy(true,true);
@@ -295,7 +300,7 @@ class Scene_03 extends Phaser.Scene{
             }
         }
 
-       if(keyE.isDown && playerPdv < 5 && scoreGateau >= 1){
+       if(Phaser.Input.Keyboard.JustDown(keyE) && playerPdv < 5 && scoreGateau >= 1){
             console.log(scoreGateau);
             playerPdv += 1;
             scoreGateau -= 1;
@@ -379,11 +384,19 @@ class Scene_03 extends Phaser.Scene{
 
         if (padConnected) {
 
+            if (paddle.X){
+                tirer(player);
+            }
+
             if(paddle.right){ 
+                player.direction = 'right';
                 player.setVelocityX(200);
+                player.setFlipX(false);
             }
             if(paddle.left){ 
+                player.direction = 'left';
                 player.setVelocityX(-200);
+                player.setFlipX(true);
             }
             if(paddle.up){ 
                 player.setVelocityY(-200);
@@ -391,11 +404,51 @@ class Scene_03 extends Phaser.Scene{
             if(paddle.down){
                 player.setVelocityY(200);
             }
-            
+
+            if(paddle.Y && playerPdv < 5 && scoreGateau >= 1){
+                console.log(scoreGateau);
+                playerPdv += 1;
+                scoreGateau -= 1;
+                texte_gateau.setText(scoreGateau);
+    
+                if(playerPdv == 5){
+                    pdv5.setAlpha(1);
+                    pdv4.setAlpha(0);
+                    pdv3.setAlpha(0);
+                    pdv2.setAlpha(0);
+                    pdv1.setAlpha(0);
+                }
+                if(playerPdv == 4){
+                    pdv5.setAlpha(0);
+                    pdv4.setAlpha(1);
+                    pdv3.setAlpha(0);
+                    pdv2.setAlpha(0);
+                    pdv1.setAlpha(0);
+                }
+                if(playerPdv == 3){
+                    pdv5.setAlpha(0);
+                    pdv4.setAlpha(0);
+                    pdv3.setAlpha(1);
+                    pdv2.setAlpha(0);
+                    pdv1.setAlpha(0);
+                }
+                if(playerPdv == 2){
+                    pdv5.setAlpha(0);
+                    pdv4.setAlpha(0);
+                    pdv3.setAlpha(0);
+                    pdv2.setAlpha(1);
+                    pdv1.setAlpha(0);
+                }
+                if(playerPdv == 1){
+                    pdv5.setAlpha(0);
+                    pdv4.setAlpha(0);
+                    pdv3.setAlpha(0);
+                    pdv2.setAlpha(0);
+                    pdv1.setAlpha(1);
+                }
+           }
         }
-
     }
-
 }
 
 function tirer(player) {
