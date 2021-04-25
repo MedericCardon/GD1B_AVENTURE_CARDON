@@ -137,7 +137,7 @@ class Scene_04 extends Phaser.Scene{
             repeat: -1
         });
 
-        player = this.physics.add.sprite(570, 520, 'player');
+        player = this.physics.add.sprite(640, 650, 'player');
         player.setCollideWorldBounds(true);
         player.setVelocity(0);
 

@@ -14,3 +14,4 @@ Controles à la manette :
 - X pour lancer un projectile (Il faut d'abord avoir ramassé l'item "carte" pour pouvoir utiliser la capacité)
 - Y pour se soigner en mangeant un gateau (item dropable sur les ennemis)
 - A pour passer les dialogues
+- B pour diminuer sa taille (il faut d'abord avoir rammasé l'item " potion" dans le donjon)

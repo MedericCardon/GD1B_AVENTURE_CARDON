@@ -48,6 +48,11 @@ var visibleBonbon1 = false;
 var visibleGateau2 = false;
 var visibleBonbon2 = false;
 
+// ----- Changement zone ----- //
+
+var changeZone3 = false;
+var changeZone4 = false;
+
 // ---------------------------------------------------//
 
 class Scene_03 extends Phaser.Scene{
@@ -229,12 +234,27 @@ class Scene_03 extends Phaser.Scene{
         function changementZone3(){
             this.scene.start("Scene_02");
             console.log("changement");
+            changeZone3 = true;
+            changeZone4 = false;
         }
 
         function changementZone4(){
             this.scene.start("Scene_04");
             console.log("changement");
+            changeZone3 = false;
+            changeZone4 = true;
         }
+
+        if (changeZone3 == true){
+            player.setX(1230)
+            player.setY(350)
+        }
+        if(changeZone4 == true){
+            player.setX(670);
+            player.setY(80);
+        }
+
+
         // ----- Camera ----- //
 
         this.cameras.main.fadeIn(2000);

@@ -123,7 +123,7 @@ class Scene_01 extends Phaser.Scene{
 
         // ----- Decors 2nd plan ----- //
 
-        passage_bas = this.physics.add.sprite(610, 700,'passage_bas');
+        passage_bas = this.physics.add.sprite(640, 715,'passage_bas');
         blockCentral.create(410,250,'blockCentral').setOrigin(0).setSize(250,20).setOffset(150,150);
 
         // ----- Player ----- //
@@ -245,8 +245,8 @@ class Scene_01 extends Phaser.Scene{
             changeZone = true;
         }
         if (changeZone == true){
-            player.setX(700);
-            player.setY(600);
+            player.setX(650);
+            player.setY(650);
         }
 
         // ----- Camera ----- //

@@ -39,6 +39,12 @@ var dropCle = true;
 var carte2;
 var etat_carte2 = true;
 
+// ----- Changement zone ----- //
+
+var changeZone1 = false;
+var changeZone2 = false;
+
+
 // ---------------------------------------------------//
 
 class Scene_02 extends Phaser.Scene{
@@ -134,7 +140,7 @@ class Scene_02 extends Phaser.Scene{
 
         // ----- Player ----- //
 
-        player = this.physics.add.sprite(200, 200, 'player');
+        player = this.physics.add.sprite(500, 80, 'player');
         player.setCollideWorldBounds(true);
         player.setVelocity(0);
 
@@ -261,11 +267,25 @@ class Scene_02 extends Phaser.Scene{
         function changementZone2(){
             this.scene.start("Scene_01");
             console.log("changement");
+            changeZone2 = true;
+            changeZone1 = false;
         }
 
         function changementZone1(){
             this.scene.start("Scene_03");
             console.log("changement");
+            changeZone2 = false;
+            changeZone1 = true;
+        }
+
+        if (changeZone1 == true){
+            player.setX(100)
+            player.setY(350)
+        }
+
+        if (changeZone2 == true){
+            player.setX(500)
+            player.setY(80)
         }
 
         // ----- Camera ----- //
