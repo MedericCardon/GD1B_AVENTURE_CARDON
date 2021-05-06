@@ -131,6 +131,7 @@ class Scene_01 extends Phaser.Scene{
         player = this.physics.add.sprite(300, 300, 'player');
         player.setCollideWorldBounds(true);
 
+
         // ----- HUD ----- //
 
         this.add.image(50,10,'HUD').setOrigin(0);

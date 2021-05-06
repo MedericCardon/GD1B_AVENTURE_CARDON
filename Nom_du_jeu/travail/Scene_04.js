@@ -20,6 +20,7 @@ var pdvBoss = 5;
 var etat_boss = true;
 var compteurBoss = 50;
 var bossInvulne = false;
+var anim_boss = true;
 
 // ----- Items ----- //
 
@@ -65,7 +66,7 @@ class Scene_04 extends Phaser.Scene{
 
         // ----- Ennemi ----- //
 
-        this.load.image('boss_cerveau','assets/03_spriteSheet_monstre_cerveau/spriteSheet_bossCerveau-assets/boss_cerveau.png');
+        this.load.image('boss_cerveau','assets/03_spriteSheet_monstre_cerveau/spriteSheet_boss_cerveau-assets/spriteSheet_boss_cerveau.png');
 
         // ----- HUD -----// 
 
@@ -115,6 +116,7 @@ class Scene_04 extends Phaser.Scene{
         // ----- Boss ----- //
 
         boss_cerveau = this.physics.add.sprite(100,200,'boss_cerveau').setOrigin(0).setSize(200,150).setOffset(50,10);
+
 
         this.tweens.add({
             targets: boss_cerveau,
@@ -267,6 +269,7 @@ class Scene_04 extends Phaser.Scene{
     }
 
     update(){
+
 
         // ----- GameOver ----- //
 
